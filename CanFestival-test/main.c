@@ -1,4 +1,14 @@
 /*      Test of CANFestival drivers
+
+This is configured for the ET-STM32F103 development board.
+
+This example puts retrieved data to the LEDs on the board. Input commands,
+supposedly from the switches on the board, have not been implemented.
+
+TODO: Implement the communications interface along with serial communications
+to replace the CAN Bus interface.
+
+Reviewed: K. Sarkies 30/06/2015
 */
 
 /*
@@ -20,13 +30,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #include <STM32/canfestival.h>
 #include <STM32/serial_stm32.h>
 #include <STM32/timerscfg.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/dispatch/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "ObjDict.h"
@@ -50,22 +61,24 @@ void sys_init();
 
 int main(void)
 {
-    sys_init();                                 // Initialize system
+    sys_init();                                 // Initialize hardware
     canInit(CAN_BAUDRATE);         		        // Initialize the CANopen bus
     initTimer();                                // Start timer for the CANopen stack
     nodeID = 0x04;				                // Read node ID first
     setNodeId(&ObjDict_Data, nodeID);
     setState(&ObjDict_Data, Initialisation);	// Initialise the state
 
-    for(;;)		                                // forever loop
+    for(;;)
     {
-        if (timer_interrupt == 1)               // Cycle timer, invoke action on every time slice
+        if (timer_interrupt == 1)               // Invoke action on every time slice
         {
             timer_interrupt = 0;	            // Reset the cycle timer
             digital_input[0] = get_inputs();
-            digital_input_handler(&ObjDict_Data, digital_input, sizeof(digital_input));
+            digital_input_handler(&ObjDict_Data, digital_input,
+                                  sizeof(digital_input));
             unsigned char error;
-            error = digital_output_handler(&ObjDict_Data, digital_output, sizeof(digital_output));
+            error = digital_output_handler(&ObjDict_Data, digital_output,
+                    sizeof(digital_output));
             if (error = 0) EMCY_setError(&ObjDict_Data,1,1,45);
             else EMCY_errorRecovered(&ObjDict_Data,1);
             set_outputs(digital_output[0]);
@@ -98,7 +111,8 @@ void sys_init()
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN);
 /* GPIO LED Ports */
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ,
-		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
+		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
+              GPIO12 | GPIO13 | GPIO14 | GPIO15);
 /* Timer Setup */
  	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
 	nvic_enable_irq(NVIC_TIM2_IRQ);
@@ -129,7 +143,7 @@ void set_outputs(unsigned char data)
 }
 
 /******************************************************************************
-Read in the data byte from the switch port of the ET-STM32F103
+Read in a data byte from the switch port of the ET-STM32F103
 ******************************************************************************/
 
 unsigned char get_inputs(void)
@@ -145,6 +159,7 @@ void tim2_isr(void)
 {
 	if (timer_get_flag(TIM2, TIM_SR_UIF)) 
         timer_clear_flag(TIM2, TIM_SR_UIF); /* Clear interrrupt flag. */
-	timer_get_flag(TIM2, TIM_SR_UIF);	/* Reread to force the previous (buffered) write before leaving */
-  	timer_interrupt = 1;	            // Set flag to indicate cycle timer tick
+/* Reread to force the previous (buffered) write before leaving */
+	timer_get_flag(TIM2, TIM_SR_UIF);
+  	timer_interrupt = 1;	        /* Set flag to indicate cycle timer tick */
 }

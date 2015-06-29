@@ -28,9 +28,6 @@
  * File: $Id: portother.c,v 1.1 2010/06/05 09:57:48 wolti Exp $
  */
 
-/* ----------------------- libopencm3 STM32F includes -----------------------*/
-#include <libopencm3/stm32/nvic.h>
-
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"

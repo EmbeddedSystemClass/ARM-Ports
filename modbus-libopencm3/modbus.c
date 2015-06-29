@@ -1,3 +1,7 @@
+/*      A test program for freeMODBUS and libopencm3
+
+*/
+
 /*
  * FreeModbus Libary: STM32F103 over FREERTOS
  * Copyright (C) 2012 Ken Sarkies <ksarkies@internode.on.net>
@@ -24,7 +28,7 @@
 #include <mb.h>
 #include <mbport.h>
 #include "stm32f1.h"
-#include <libopencm3/stm32/f1/gpio.h>
+#include <libopencm3/stm32/gpio.h>
 
 /* Prototypes */
 void setupHardware( void );

@@ -1,3 +1,7 @@
+/*      A test program for freeMODBUS and libopencm3 with freeRTOS as scheduler
+
+*/
+
 /*
  * FreeModbus Libary: STM32F103 over FREERTOS
  * Copyright (C) 2012 Ken Sarkies
@@ -33,10 +37,10 @@
 #include <task.h>
 
 /* ----------------------- STM32F includes -------------------------------*/
-#include <libopencm3/stm32f/f1/rcc.h>
-#include <libopencm3/stm32f/f1/gpio.h>
+#include <libopencm3/stm32f/rcc.h>
+#include <libopencm3/stm32f/gpio.h>
 #include <libopencm3/stm32f/usart.h>
-#include <libopencm3/stm32f/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
@@ -73,10 +77,12 @@ main( void )
     SetupHardware(  );
 
 /* Attempt to create xTaskMODBUS task followed by xTaskApplication task, then start scheduler */
-    if( pdPASS != xTaskCreate( vTaskMODBUS, "MODBUS", TASK_MODBUS_STACK_SIZE, NULL, TASK_MODBUS_PRIORITY, NULL ) )
+    if( pdPASS != xTaskCreate( vTaskMODBUS, "MODBUS", TASK_MODBUS_STACK_SIZE,
+                               NULL, TASK_MODBUS_PRIORITY, NULL ) )
     {
     }
-    else if( pdPASS != xTaskCreate( vTaskApplication, "APPL", TASK_APPL_STACK_SIZE, NULL, TASK_APPL_PRIORITY, NULL ) )
+    else if( pdPASS != xTaskCreate( vTaskApplication, "APPL",
+                        TASK_APPL_STACK_SIZE, NULL, TASK_APPL_PRIORITY, NULL ) )
     {
     }
     else
@@ -113,7 +119,8 @@ vTaskMODBUS( void *pvArg )
         }
         else
         {
-/* Set the slave ID to 52, run indicator status byte is 0xFF and a 3 byte additional field */
+/* Set the slave ID to 52, run indicator status byte is 0xFF and a 3 byte
+additional field */
             if( MB_ENOERR != ( eStatus = eMBSetSlaveID( 0x34, TRUE, ucSlaveID, 3 ) ) )
             {
                 /* Can not set slave id. Check arguments */

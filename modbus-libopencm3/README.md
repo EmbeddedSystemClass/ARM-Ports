@@ -19,7 +19,9 @@ Two examples are provided:
 
 * modbus.c that uses timer polling.
 
-* modbus-freertos.c that uses a scheduler.
+* modbus-freertos.c that uses the FreeRTOS scheduler.
+
+FreeMODBUS-1.5.0 is the latest version, now some years old.
 
 More information is provided at:
 

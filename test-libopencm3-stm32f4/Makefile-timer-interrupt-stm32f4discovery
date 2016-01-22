@@ -1,0 +1,54 @@
+# Basic makefile K Sarkies
+
+PROJECT		= timer-interrupt-stm32f4discovery
+PREFIX		= arm-none-eabi
+CC			= $(PREFIX)-gcc
+LD			= $(PREFIX)-gcc
+OBJCOPY		= $(PREFIX)-objcopy
+OBJDUMP		= $(PREFIX)-objdump
+GDB			= $(PREFIX)-gdb
+NM 			= $(PREFIX)-nm
+
+DRIVERS_DIR	= ../../arm-library/libopencm3
+DRIVERS_SRC	= $(DRIVERS_DIR)/lib/stm32/f4
+DRIVERS_INC	= $(DRIVERS_DIR)/include
+
+VPATH += $(DRIVERS_SRC)/ $(DRIVERS_SRC)/../
+
+CFLAGS		+= -Os -g -Wall -Wextra -I. -I$(DRIVERS_INC) \
+		       -fno-common -mcpu=cortex-m4 -mthumb -mfloat-abi=hard \
+               -mfpu=fpv4-sp-d16 -MD -DSTM32F4 -DGCC_ARMCM3 \
+		       -ffunction-sections -fdata-sections
+
+LDSCRIPT	 = stm32-hf407.ld
+LDFLAGS		+= -I . -lc -T$(LDSCRIPT) -lopencm3_stm32f4 -L$(DRIVERS_DIR)/lib \
+               -nostartfiles -Wl,--gc-sections \
+		       -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
+CFILES		= $(PROJECT).c usart.c rcc.c gpio.c vector.c timer.c adc.c dac.c dma.c nvic.c
+
+OBJS		= $(CFILES:.c=.o)
+
+all: $(PROJECT).elf $(PROJECT).bin $(PROJECT).hex $(PROJECT).list $(PROJECT).sym
+
+$(PROJECT).elf: $(OBJS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+
+$(PROJECT).hex: $(PROJECT).elf
+	$(OBJCOPY) -O ihex  $< $@
+
+$(PROJECT).bin: $(PROJECT).elf
+	$(OBJCOPY) -O binary  $< $@
+
+$(PROJECT).list: $(PROJECT).elf
+	$(OBJDUMP) -S $< > $@
+
+$(PROJECT).sym: $(PROJECT).elf
+	$(NM) -n $< > $@
+
+clean:
+	rm *.elf *.o *.d *.hex *.list *.sym *.bin
+
+# Using CC and CFLAGS will cause any object files to be built implicitely if they are missing.
+# We are searching an archive library opencm3_stm32f4.a which has been precompiled, so we don't need
+# to recompile the DRIVERS source.

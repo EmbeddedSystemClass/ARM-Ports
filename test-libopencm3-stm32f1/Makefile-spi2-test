@@ -1,0 +1,78 @@
+# Basic makefile K Sarkies
+
+PROJECT	        = spi2-test
+
+MCU             = cortex-m3
+CHIP            = STM32F10x_512k_64k
+BOARD           = ET_STAMP_STM32
+F_XTAL          = 8000000
+SYSCLOCK_CL     = SYSCLK_FREQ_72MHz=72000000
+
+PREFIX	        = arm-none-eabi
+CC		        = $(PREFIX)-gcc
+LD		        = $(PREFIX)-gcc
+OBJCOPY	        = $(PREFIX)-objcopy
+OBJDUMP	        = $(PREFIX)-objdump
+GDB		        = $(PREFIX)-gdb
+NM 		        = $(PREFIX)-nm
+
+LOCALLIBDIR     = ./
+DRIVERS_DIR	    = ../../arm-library/libopencm3-examples/libopencm3
+DRIVERS_SRC     = $(DRIVERS_DIR)/lib/stm32/f1
+DRIVERS_INC	    = $(DRIVERS_DIR)/include
+
+#VPATH += $(DRIVERS_SRC)/ $(DRIVERS_SRC)/../
+
+# Inclusion of header files
+INCLUDES	= $(patsubst %,-I%,$(DRIVERS_INC))
+
+CDEFS        = -DSTM32F10X_MD
+CDEFS       += -DHSE_VALUE=$(F_XTAL)UL
+CDEFS       += -D$(SYSCLOCK_CL)
+CDEFS       += -DUSE_$(BOARD)
+CDEFS       += -DSTM32_SD_USE_DMA
+CDEFS       += -DSTARTUP_DELAY
+
+CFLAGS		+= -Os -g -Wall -Wextra -I. $(INCLUDES) -fno-common -mthumb -MD
+CFLAGS		+= -DGCC_ARMCM3 -ffunction-sections -fdata-sections
+CFLAGS		+= -mcpu=cortex-m3 -DSTM32F1 -DUSE_ET_STM32F103 -msoft-float
+CFLAGS		+= $(CDEFS)
+
+LDSCRIPT     = stm32-h103RET6.ld
+
+LDFLAGS		+= -I . -lc -T$(LDSCRIPT) -L$(DRIVERS_DIR)/lib -nostartfiles -Wl,--gc-sections -mthumb
+LDFLAGS		+= -march=armv7 -mfix-cortex-m3-ldrd -msoft-float -lopencm3_stm32f1
+
+# The libopencm3 library is assumed to exist in libopencm3/lib, otherwise add files here
+CFILES      = $(PROJECT).c buffer.c
+
+OBJS		= $(CFILES:.c=.o)
+
+all: $(PROJECT).elf $(PROJECT).bin $(PROJECT).hex $(PROJECT).lss $(PROJECT).list $(PROJECT).sym
+
+$(PROJECT).elf: $(OBJS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+
+$(PROJECT).hex: $(PROJECT).elf
+	$(OBJCOPY) -O ihex  $< $@
+
+$(PROJECT).bin: $(PROJECT).elf
+	$(OBJCOPY) -O binary  $< $@
+
+$(PROJECT).lss: $(PROJECT).elf
+	$(OBJDUMP) -h -S $< > $@
+
+$(PROJECT).list: $(PROJECT).elf
+	$(OBJDUMP) -S $< > $@
+
+$(PROJECT).sym: $(PROJECT).elf
+	$(NM) -n $< > $@
+
+clean:
+	rm *.elf *.o *.d *.hex *.list *.sym *.bin *.lss
+
+# Using CC and CFLAGS will cause any object files to be built implicitely if they are missing.
+# We are searching an archive library opencm3_stm32f1.a which has been precompiled, so we don't need
+# to recompile the DRIVERS source.
+# The libopencm3 source has been added in case the archive doesn't have them, VPATH finds them.
+

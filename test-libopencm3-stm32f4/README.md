@@ -9,15 +9,15 @@ $ make -f Makefile-*name*
 
 where *name* is the root name of the file.
 
-**adc-injected-stm32f4discovery.c**
-**adc-interrupt-stm32f4discovery.c**
-**adc-poll-stm32f4discovery.c**
-**adc-stm32f4discovery.c**
-**blink-stm32f4discovery.c**
-**test-dac-dma-stm32f4discovery.c**
-**test-dac-polled-stm32f7discovery.c**
-**test-dac-timer-stm32f4discovery.c**
-**timer-interrupt-stm32f4discovery.c**
+* **adc-injected-stm32f4discovery.c**
+* **adc-interrupt-stm32f4discovery.c**
+* **adc-poll-stm32f4discovery.c**
+* **adc-stm32f4discovery.c**
+* **blink-stm32f4discovery.c**
+* **test-dac-dma-stm32f4discovery.c**
+* **test-dac-polled-stm32f7discovery.c**
+* **test-dac-timer-stm32f4discovery.c**
+* **timer-interrupt-stm32f4discovery.c**
 
 K. Sarkies
 17/12/2015

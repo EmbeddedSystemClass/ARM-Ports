@@ -33,16 +33,23 @@ The board used is the ET-STAMP-STM32
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/cm3/nvic.h>
 
+/*--------------------------------------------------------------------------*/
+
 void gpio_setup(void)
 {
-	/* Enable GPIOB clock. */
+/* Enable GPIO clocks. */
 	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_AFIO);
 
-	/* Set GPIO15 (in GPIO port A) to 'output push-pull' */
+/* Set GPIO15 (in GPIO port A) to 'output push-pull' */
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ,
 		          GPIO_CNF_OUTPUT_PUSHPULL, GPIO0);
 	gpio_clear(GPIOA, GPIO0);
 }
+
+/*--------------------------------------------------------------------------*/
 
 void timer_setup(void)
 {
@@ -64,6 +71,8 @@ void timer_setup(void)
 	timer_enable_counter(TIM2);
 }
 
+/*--------------------------------------------------------------------------*/
+
 void tim2_isr(void)
 {
 	if (timer_get_flag(TIM2, TIM_SR_UIF))
@@ -71,6 +80,8 @@ void tim2_isr(void)
 	timer_get_flag(TIM2, TIM_SR_UIF);	/* Reread to force the previous write */
  	gpio_toggle(GPIOA, GPIO0);   /* Toggle port, frequency should be 50Hz. */
 }
+
+/*--------------------------------------------------------------------------*/
 
 int main(void)
 {

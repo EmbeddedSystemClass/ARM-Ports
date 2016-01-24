@@ -1,6 +1,6 @@
 # Basic makefile K Sarkies
 
-PROJECT		= test-dac-dma-stm32f4discovery
+PROJECT		= adc-dma-stm32f4discovery
 
 include Makefile-Base-stm32f4discovery
 

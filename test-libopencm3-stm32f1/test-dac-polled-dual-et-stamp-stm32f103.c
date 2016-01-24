@@ -21,19 +21,21 @@ PA4 is provided for the DAC output
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f1/rcc.h>
+#include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/dispatch/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/dac.h>
-#include <libopencm3/stm32/f1/adc.h>
+#include <libopencm3/stm32/adc.h>
 
 #define PERIOD 1152
 
+/*--------------------------------------------------------------------*/
 /* Globals */
-u32 cntr;
-u8 v[256], y[256];
+uint32_t cntr;
+uint8_t v[256], y[256];
 
+/*--------------------------------------------------------------------*/
 void hardware_setup(void)
 {
 /* Setup the clock to 72MHz from the 8MHz external crystal */
@@ -44,8 +46,10 @@ void hardware_setup(void)
    APB2 (High Speed Advanced Peripheral Bus) peripheral clock enable register (RCC_APB2ENR)
    Set RCC_APB2ENR_IOPBEN for port B, RCC_APB2ENR_IOPAEN for port A and RCC_APB2ENR_IOPAEN
    for Alternate Function clock */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |
-								 RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN);
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_AFIO);
 
 /* Digital Test output PC0 */
 	gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ,
@@ -54,7 +58,7 @@ void hardware_setup(void)
 /* ----------------- Timer 2 Interrupt and DAC control*/
 
 /* Enable TIM2 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+	rcc_periph_clock_enable(RCC_TIM2);
 /* Enable TIM2 interrupt. */
 	nvic_enable_irq(NVIC_TIM2_IRQ);
 	timer_reset(TIM2);
@@ -100,6 +104,7 @@ woken up by the time the first interrupt occurs */
 
 }
 
+/*--------------------------------------------------------------------*/
 void tim2_isr(void)
 {
 	if (timer_get_flag(TIM2, TIM_SR_CC1IF))
@@ -121,9 +126,10 @@ void tim2_isr(void)
 
 }
 
+/*--------------------------------------------------------------------*/
 int main(void)
 {
-	u32 i, x;
+	uint32_t i, x;
 	for (i=0; i<256; i++)
 	{
 		if (i<10) x=10;

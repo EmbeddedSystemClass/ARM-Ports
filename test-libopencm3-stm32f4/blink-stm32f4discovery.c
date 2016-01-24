@@ -26,23 +26,28 @@ The board used is the STM32F4-discovery with LEDs on port D pins 12-15
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f4/rcc.h>
-#include <libopencm3/stm32/f4/gpio.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+
+/*--------------------------------------------------------------------------*/
 
 void clock_setup(void)
 {
 	rcc_clock_setup_hse_3v3(&hse_8mhz_3v3[CLOCK_3V3_168MHZ]);
 }
 
+/*--------------------------------------------------------------------------*/
+
 void gpio_setup(void)
 {
-//	rcc_clock_setup_hse_3v3(&hse_8mhz_3v3[CLOCK_3V3_168MHZ]);
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN);
+	rcc_periph_clock_enable(RCC_GPIOD);
 	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 		      GPIO12 | GPIO13 | GPIO14 | GPIO15);
 	gpio_set_output_options(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ,
 		      GPIO12 | GPIO13 | GPIO14 | GPIO15);
 }
+
+/*--------------------------------------------------------------------------*/
 
 int main(void)
 {

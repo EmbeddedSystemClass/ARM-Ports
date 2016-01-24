@@ -1,8 +1,8 @@
 /* DAC test using timer interrupt and software trigger.
- *
- * A Digital test output is provided on PC1 for triggering
- * Timer 2 is setup without output to provide a timed interrupt.
- * PA4 is provided for the DAC output
+
+A Digital test output is provided on PC1 for triggering
+Timer 2 is setup without output to provide a timed interrupt.
+PA4 is provided for the DAC output
  */
 
 /*
@@ -20,18 +20,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f4/rcc.h>
-#include <libopencm3/stm32/f4/gpio.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/stm32/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/dac.h>
-#include <libopencm3/stm32/f4/adc.h>
+#include <libopencm3/stm32/adc.h>
 
 #define PERIOD 1152
 
 /* Globals */
-u32 cntr;
-u8 v[256];
+uint32_t cntr;
+uint8_t v[256];
 
 /*--------------------------------------------------------------------*/
 void clock_setup(void)
@@ -43,7 +43,8 @@ void clock_setup(void)
 void gpio_setup(void)
 {
 /* Ports A and C are on AHB1 */
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPAEN | RCC_AHB1ENR_IOPCEN);
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOC);
 /* Digital Test output PC1 */
 	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
 	gpio_set_output_options(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ, GPIO1);
@@ -53,7 +54,7 @@ void gpio_setup(void)
 void timer_setup(void)
 {
 /* Enable TIM2 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+	rcc_periph_clock_enable(RCC_TIM2);
 /* Enable TIM2 interrupt. */
 	nvic_enable_irq(NVIC_TIM2_IRQ);
 	timer_reset(TIM2);
@@ -83,7 +84,7 @@ void timer_setup(void)
 void dac_setup(void)
 {
 /* Enable the DAC clock on APB1 */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_DACEN);
+	rcc_periph_clock_enable(RCC_DAC);
 /* Set port PA4 for DAC1 to analogue output. Output driver mode is ignored. */
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO4);
 /* Setup the DAC, software trigger source. Assume the DAC has
@@ -117,7 +118,7 @@ void tim2_isr(void)
 /*--------------------------------------------------------------------*/
 int main(void)
 {
-	u32 i;
+	uint32_t i;
 	for (i=0; i<256; i++)
 	{
 		if (i<10) v[i]=10;

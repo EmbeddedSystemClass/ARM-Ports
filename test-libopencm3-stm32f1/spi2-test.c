@@ -100,17 +100,18 @@ static void clock_setup(void)
 {
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 
-	/* Enable GPIOA, GPIOB, GPIOC clock. */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR,
-				    RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |
-				    RCC_APB2ENR_IOPCEN);
+/* Enable GPIOA, GPIOB, GPIOC clock. */
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_AFIO);
 
 }
 
 /*--------------------------------------------------------------------------*/
 static void gpio_setup(void)
 {
-	/* Set GPIO1-3 (in GPIO port A) to 'output push-pull'. */
+/* Set GPIO1-3 (in GPIO port A) to 'output push-pull'. */
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ,
 		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO1 | GPIO2 | GPIO3);
 }
@@ -118,11 +119,10 @@ static void gpio_setup(void)
 /*--------------------------------------------------------------------------*/
 static void spi_setup(void) {
 
-	/* Enable SPI2 Periph */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR,
-				    RCC_APB1ENR_SPI2EN);
+/* Enable SPI2 Periph */
+	rcc_periph_clock_enable(RCC_SPI2);
 
-    /* Configure GPIOs: SS=PB12, SCK=PB13, MISO=PB14 and MOSI=PB15 */
+/* Configure GPIOs: SS=PB12, SCK=PB13, MISO=PB14 and MOSI=PB15 */
     gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ,
             GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO13 | GPIO15 );
     gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ,
@@ -130,34 +130,34 @@ static void spi_setup(void) {
 
     gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT,GPIO14);
 
-    /* Reset SPI, SPI_CR1 register cleared, SPI is disabled */
+/* Reset SPI, SPI_CR1 register cleared, SPI is disabled */
     spi_reset(SPI2);
 
-    /* Set up SPI in Master mode with:
-    * Clock baud rate: 1/128 of peripheral clock frequency
-    * Clock polarity: Idle High
-    * Clock phase: Data valid on 2nd clock pulse
-    * Data frame format: 8-bit
-    * Frame format: MSB First
-    */
+/* Set up SPI in Master mode with:
+* Clock baud rate: 1/128 of peripheral clock frequency
+* Clock polarity: Idle High
+* Clock phase: Data valid on 2nd clock pulse
+* Data frame format: 8-bit
+* Frame format: MSB First
+*/
     spi_init_master(SPI2, SPI_CR1_BAUDRATE_FPCLK_DIV_128, SPI_CR1_CPOL_CLK_TO_1_WHEN_IDLE,
                   SPI_CR1_CPHA_CLK_TRANSITION_2, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
 
-    /*
-    * Set NSS management to software.
-    *
-    * Note:
-    * Setting nss high is very important, even if we are controlling the GPIO
-    * ourselves this bit needs to be at least set to 1, otherwise the spi
-    * peripheral will not send any data out.
-    */
+/*
+* Set NSS management to software.
+*
+* Note:
+* Setting nss high is very important, even if we are controlling the GPIO
+* ourselves this bit needs to be at least set to 1, otherwise the spi
+* peripheral will not send any data out.
+*/
     spi_enable_software_slave_management(SPI2);
     spi_set_nss_high(SPI2);
 
-    /* Enable SPI2 periph. */
+/* Enable SPI2 periph. */
     spi_enable(SPI2);
 
-    /* Set the CS low (enabled) */
+/* Set the CS low (enabled) */
     gpio_clear(GPIOB, GPIO12);
 }
 
@@ -284,16 +284,16 @@ void usart_print_string(char *ch)
 void usart1_isr(void)
 {
 /* Find out what interrupted and get or send data as appropriate */
-	/* Check if we were called because of RXNE. */
+/* Check if we were called because of RXNE. */
 	if (usart_get_flag(USART1,USART_SR_RXNE))
 	{
-		/* If buffer full we'll just drop it */
+/* If buffer full we'll just drop it */
 		buffer_put(receive_buffer, (uint8_t) usart_recv(USART1));
 	}
-	/* Check if we were called because of TXE. */
+/* Check if we were called because of TXE. */
 	if (usart_get_flag(USART1,USART_SR_TXE))
 	{
-		/* If buffer empty, disable the tx interrupt */
+/* If buffer empty, disable the tx interrupt */
 		uint16_t data = buffer_get(send_buffer);
 		if (data == BUFFER_EMPTY)
 		{

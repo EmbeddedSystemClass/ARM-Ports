@@ -5,7 +5,8 @@ This project describes ports of CANfestival and freeMODBUS libraries to
 work with libopencm3.
 
 In addition there are a number of sample programs designed to run with the
-ET-STM32-STAMP and ET-STM32F103 development boards.
+ET-STM32-STAMP and ET-STM32F103 development boards, and the STM32F4-Discovery
+board.
 
 * FreeRTOS-usart-libopencm3
 * test-can-ETSTM32STAMP

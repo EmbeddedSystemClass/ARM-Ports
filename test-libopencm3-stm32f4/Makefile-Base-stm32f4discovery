@@ -1,6 +1,7 @@
 # Basic makefile K Sarkies
+# Just add PROJECT = base name of main c file to compile
+# Also add any other CFILES to be added in.
 
-PROJECT		= adc-stm32f4discovery
 PREFIX		= arm-none-eabi
 CC			= $(PREFIX)-gcc
 LD			= $(PREFIX)-gcc
@@ -9,11 +10,12 @@ OBJDUMP		= $(PREFIX)-objdump
 GDB			= $(PREFIX)-gdb
 NM 			= $(PREFIX)-nm
 
-DRIVERS_DIR	= ../../arm-library/libopencm3
+LIBRARY_DIR = /home/ksarkies/Development-Software/arm-library
+DRIVERS_DIR = $(LIBRARY_DIR)/libopencm3-examples/libopencm3
 DRIVERS_SRC	= $(DRIVERS_DIR)/lib/stm32/f4
 DRIVERS_INC	= $(DRIVERS_DIR)/include
 
-VPATH += $(DRIVERS_SRC)/ $(DRIVERS_SRC)/../
+VPATH       += $(DRIVERS_SRC)/ $(DRIVERS_SRC)/../
 
 CFLAGS		+= -Os -g -Wall -Wextra -I. -I$(DRIVERS_INC) \
 		       -fno-common -mcpu=cortex-m4 -mthumb -mfloat-abi=hard \
@@ -25,7 +27,7 @@ LDFLAGS		+= -I . -lc -T$(LDSCRIPT) -lopencm3_stm32f4 -L$(DRIVERS_DIR)/lib \
                -nostartfiles -Wl,--gc-sections \
 		       -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
-CFILES		= $(PROJECT).c rcc.c gpio.c vector.c adc.c dma.c nvic.c
+CFILES		+= $(PROJECT).c
 
 OBJS		= $(CFILES:.c=.o)
 
@@ -49,6 +51,6 @@ $(PROJECT).sym: $(PROJECT).elf
 clean:
 	rm *.elf *.o *.d *.hex *.list *.sym *.bin
 
-# Using CC and CFLAGS will cause any object files to be built implicitely if they are missing.
-# We are searching an archive library opencm3_stm32f4.a which has been precompiled, so we don't need
-# to recompile the DRIVERS source.
+# Using CC and CFLAGS will cause any object files to be built implicitely if
+# they are missing. # We are searching an archive library opencm3_stm32f4.a
+# which has been precompiled, so we don't need to recompile the DRIVERS source.

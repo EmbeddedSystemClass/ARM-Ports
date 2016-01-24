@@ -1,6 +1,6 @@
 # Basic makefile K Sarkies
 
-PROJECT		= flash-rw-et-stm32f103
+PROJECT		= pwm-tim3
 
 include Makefile-Base-stm32f103
 

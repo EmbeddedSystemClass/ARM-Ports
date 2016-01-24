@@ -1,50 +1,6 @@
 # Basic makefile K Sarkies
 
 PROJECT		= iwdg-et-stm32f103
-PREFIX		= arm-none-eabi
-CC			= $(PREFIX)-gcc
-LD			= $(PREFIX)-gcc
-OBJCOPY		= $(PREFIX)-objcopy
-OBJDUMP		= $(PREFIX)-objdump
-GDB			= $(PREFIX)-gdb
-NM 			= $(PREFIX)-nm
 
-DRIVERS_DIR	= ../../arm-library/libopencm3
-DRIVERS_SRC	= $(DRIVERS_DIR)/lib/stm32/f1
-DRIVERS_INC	= $(DRIVERS_DIR)/include
+include Makefile-Base-stm32f103
 
-VPATH += $(DRIVERS_SRC)/ $(DRIVERS_SRC)/../
-
-CFLAGS		+= -Os -g -Wall -Wextra -I$(DRIVERS_INC) \
-		   -fno-common -mcpu=cortex-m3 -mthumb -msoft-float -MD -DSTM32F1
-LDSCRIPT	 = stm32-h103RBT6.ld
-LDFLAGS		+= -I . -lc -T$(LDSCRIPT) -lopencm3_stm32f1 -L$(DRIVERS_DIR)/lib -nostartfiles -Wl,--gc-sections \
-		   -mthumb -march=armv7 -mfix-cortex-m3-ldrd -msoft-float
-
-CFILES		= $(PROJECT).c rcc.c gpio.c vector.c iwdg.c
-
-OBJS		= $(CFILES:.c=.o)
-
-all: $(PROJECT).elf $(PROJECT).bin $(PROJECT).hex $(PROJECT).list $(PROJECT).sym
-
-$(PROJECT).elf: $(OBJS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
-
-$(PROJECT).hex: $(PROJECT).elf
-	$(OBJCOPY) -O ihex  $< $@
-
-$(PROJECT).bin: $(PROJECT).elf
-	$(OBJCOPY) -O binary  $< $@
-
-$(PROJECT).list: $(PROJECT).elf
-	$(OBJDUMP) -S $< > $@
-
-$(PROJECT).sym: $(PROJECT).elf
-	$(NM) -n $< > $@
-
-clean:
-	rm *.elf *.o *.d *.hex *.list *.sym *.bin
-
-# Using CC and CFLAGS will cause any object files to be built implicitely if they are missing.
-# We are searching an archive library opencm3_stm32f1.a which has been precompiled, so we don't need
-# to recompile the DRIVERS source.

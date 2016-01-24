@@ -25,19 +25,21 @@ The board used is the ET-STM32F103 with LEDs on port B pins 8-15
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f1/rcc.h>
-#include <libopencm3/stm32/f1/gpio.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/iwdg.h>
 
+/*--------------------------------------------------------------------*/
 void hardware_setup(void)
 {
 /* Setup the clock to 72MHz from the 8MHz external crystal */
 
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPBEN);
+	rcc_periph_clock_enable(RCC_GPIOB);
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ,
-		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
+		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
+              GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
 	rcc_osc_on(LSI);
 	rcc_wait_for_osc_ready(LSI);
@@ -46,13 +48,14 @@ void hardware_setup(void)
 	iwdg_start();
 }
 
+/*--------------------------------------------------------------------*/
 int main(void)
 {
 	hardware_setup();
-	u32 i=0;
+	uint32_t i=0;
 	for (; i<10; i++)
 	{
-		u32 d=0;
+		uint32_t d=0;
 		for (; d<2000000; d++) __asm__("nop");
 		gpio_toggle(GPIOB, GPIO8);
 		iwdg_reset();

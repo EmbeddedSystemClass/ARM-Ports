@@ -34,18 +34,22 @@ The board used is the ET-STM32F103 with LEDs on port B pins 8-15
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/cm3/nvic.h>
 
+/*--------------------------------------------------------------------------*/
+
 void gpio_setup(void)
 {
-	/* Enable GPIOB clock. */
+/* Enable GPIOB clock. */
 	rcc_periph_clock_enable(RCC_GPIOB);
 
-	/* Set GPIO8-15 (in GPIO port B) to 'output push-pull' for the LEDs. */
+/* Set GPIO8-15 (in GPIO port B) to 'output push-pull' for the LEDs. */
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ,
 		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
               GPIO12 | GPIO13 | GPIO14 | GPIO15);
 	gpio_clear(GPIOB, GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 |
                GPIO14 | GPIO15);
 }
+
+/*--------------------------------------------------------------------------*/
 
 void timer_setup(void)
 {
@@ -57,16 +61,18 @@ void timer_setup(void)
 	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT,
 		       TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
 	timer_continuous_mode(TIM2);
-	/* Set timer prescaler. 72MHz/1440 => 50000 counts per second. */
+/* Set timer prescaler. 72MHz/1440 => 50000 counts per second. */
 	timer_set_prescaler(TIM2, 1440);
-	/* End timer value. When this is reached an interrupt is generated. */
+/* End timer value. When this is reached an interrupt is generated. */
 	timer_set_period(TIM2, 300);    /* Should be 166 per second (toggle 83Hz) */
 //	timer_set_period(TIM2, 5000);   /* Should be 10 per second */
-	/* Update interrupt enable. */
+/* Update interrupt enable. */
 	timer_enable_irq(TIM2, TIM_DIER_UIE);
-	/* Start timer. */
+/* Start timer. */
 	timer_enable_counter(TIM2);
 }
+
+/*--------------------------------------------------------------------------*/
 
 void tim2_isr(void)
 {
@@ -78,6 +84,8 @@ void tim2_isr(void)
 	timer_disable_counter(TIM2);
 }
 
+/*--------------------------------------------------------------------------*/
+
 int main(void)
 {
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
@@ -85,17 +93,17 @@ int main(void)
 	timer_setup();
 
 
-	/*
-	 * The goal is to let the LED2 glow for a second and then be
-	 * off for a second.
-	 */
+/*
+ * The goal is to let the LED2 glow for a second and then be
+ * off for a second.
+ */
 
 	while (1) /* Halt. */
 	{
-		/* Update interrupt enable. */
+/* Update interrupt enable. */
 		timer_enable_irq(TIM2, TIM_DIER_UIE);
 
-		/* Start timer. */
+/* Start timer. */
 		timer_enable_counter(TIM2);
 
 //		gpio_toggle(GPIOB, GPIO9);	/* LED on/off */

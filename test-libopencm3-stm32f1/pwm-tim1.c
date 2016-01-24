@@ -45,8 +45,10 @@ void hardware_setup(void)
    APB2 (High Speed Advanced Peripheral Bus) peripheral clock enable register (RCC_APB2ENR)
    Set RCC_APB2ENR_IOPBEN for port B, RCC_APB2ENR_IOPAEN for port A and RCC_APB2ENR_IOPAEN
    for Alternate Function clock */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |
-								 RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN);
+    rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_AFIO);
 
 /* Set ports PA8 (TIM1_CH1), PA9 (TIM1_CH2), PB13 (TIM1_CH1N), PB14 (TIM1_CH2N)
 for PWM, to 'alternate function output push-pull'. */
@@ -57,7 +59,7 @@ for PWM, to 'alternate function output push-pull'. */
 
 /* ------------------ Timer 1 PWM */
 /* Enable TIM1 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_TIM1EN);
+	rcc_periph_clock_enable(RCC_TIM1);
 
 /* Reset TIM1 peripheral. */
 	timer_reset(TIM1);

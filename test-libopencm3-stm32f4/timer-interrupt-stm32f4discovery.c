@@ -1,7 +1,7 @@
 /* STM32F1 Test of timer IRQ
 
-LED is blinked in timer ISR. Timer is disabled in IRQ, then re-enabled after a poll loop.
-Uses the update interrupt.
+LED is blinked in timer ISR. Timer is disabled in IRQ, then re-enabled after a
+poll loop. Uses the update interrupt.
 
 Tests:
 Timer Interrupt.
@@ -29,11 +29,11 @@ The board used is the stm32f4-discovery with LEDs on port D pins 12-15
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f4/rcc.h>
-#include <libopencm3/stm32/f4/flash.h>
-#include <libopencm3/stm32/f4/gpio.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/flash.h>
+#include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/dispatch/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 
 /*--------------------------------------------------------------------*/
 void clock_setup(void)
@@ -45,12 +45,12 @@ void clock_setup(void)
 void gpio_setup(void)
 {
 /* Port C are on AHB1 */
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR,RCC_AHB1ENR_IOPCEN);
+	rcc_periph_clock_enable(RCC_GPIOC);
 /* Digital Test output PC1 */
 	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO0 | GPIO1);
 	gpio_set_output_options(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ, GPIO0 | GPIO1);
 /* Signal output PD */
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN);
+	rcc_periph_clock_enable(RCC_GPIOD);
 	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 		      GPIO12 | GPIO13 | GPIO14 | GPIO15);
 	gpio_set_output_options(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ,
@@ -60,7 +60,7 @@ void gpio_setup(void)
 /*--------------------------------------------------------------------*/
 void timer_setup(void)
 {
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+	rcc_periph_clock_enable(RCC_TIM2);
 	nvic_enable_irq(NVIC_TIM2_IRQ);
 	nvic_set_priority(NVIC_TIM2_IRQ, 1);
 	timer_reset(TIM2);

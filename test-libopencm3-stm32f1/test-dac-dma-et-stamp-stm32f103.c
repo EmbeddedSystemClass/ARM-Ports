@@ -20,17 +20,17 @@ DMA ISR on transfer complete is used to toggle a port for CRO trigger.
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f1/rcc.h>
-#include <libopencm3/stm32/f1/gpio.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/dispatch/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/dac.h>
-#include <libopencm3/stm32/f1/dma.h>
+#include <libopencm3/stm32/dma.h>
 
 #define PERIOD 1152
 
 /* Globals */
-u8 v[256];
+uint8_t v[256];
 
 /*--------------------------------------------------------------------*/
 void clock_setup(void)
@@ -42,8 +42,9 @@ void clock_setup(void)
 /*--------------------------------------------------------------------*/
 void gpio_setup(void)
 {
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN |
-								 RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN);
+    rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_GPIOC);
+    rcc_periph_clock_enable(RCC_AFIO);
 /* Digital Test outputs PC0 and PC1 */
 	gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ,
 		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO0 | GPIO1);
@@ -53,7 +54,7 @@ void gpio_setup(void)
 void timer_setup(void)
 {
 /* Enable TIM2 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+	rcc_periph_clock_enable(RCC_TIM2);
 	timer_reset(TIM2);
 /* Timer global mode: - No divider, Alignment edge, Direction up */
 	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT,
@@ -88,9 +89,9 @@ void dma_setup(void)
 	dma_enable_circular_mode(DMA2,DMA_CHANNEL3);
 	dma_set_read_from_memory(DMA2,DMA_CHANNEL3);
 /* The register to target is the DAC1 8-bit right justified data register */
-	dma_set_peripheral_address(DMA2,DMA_CHANNEL3,(u32) &DAC_DHR8R1);
+	dma_set_peripheral_address(DMA2,DMA_CHANNEL3,(uint32_t) &DAC_DHR8R1);
 /* The array v[] is filled with the waveform data to be output */
-	dma_set_memory_address(DMA2,DMA_CHANNEL3,(u32) v);
+	dma_set_memory_address(DMA2,DMA_CHANNEL3,(uint32_t) v);
 	dma_set_number_of_data(DMA2,DMA_CHANNEL3,256);
 	dma_enable_transfer_complete_interrupt(DMA2, DMA_CHANNEL3);
 	dma_enable_channel(DMA2,DMA_CHANNEL3);
@@ -130,7 +131,7 @@ int main(void)
 {
 /* Fill the array with funky waveform data */
 /* This is for dual channel 8-bit right aligned */
-	u32 i, x;
+	uint32_t i, x;
 	for (i=0; i<256; i++)
 	{
 		if (i<10) x=10;

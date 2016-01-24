@@ -27,7 +27,7 @@ PA4 has the analogue output.
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/dispatch/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/dac.h>
 #include <libopencm3/stm32/dma.h>
 
@@ -46,7 +46,8 @@ void clock_setup(void)
 void gpio_setup(void)
 {
 /* Porta A and C are on AHB1 */
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPAEN | RCC_AHB1ENR_IOPCEN);
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOC);
 /* Set the digital test output on PC1 */
 	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
 	gpio_set_output_options(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ, GPIO1);
@@ -58,7 +59,7 @@ void gpio_setup(void)
 void timer_setup(void)
 {
 /* Enable TIM2 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
+	rcc_periph_clock_enable(RCC_TIM2);
 	timer_reset(TIM2);
 /* Timer global mode: - No divider, Alignment edge, Direction up */
 	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT,
@@ -83,7 +84,7 @@ void dma_setup(void)
 {
 /* DAC channel 1 uses DMA controller 1 Stream 5 Channel 7. */
 /* Enable DMA1 clock and IRQ */
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_DMA1EN);
+	rcc_periph_clock_enable(RCC_DMA1);
 	nvic_enable_irq(NVIC_DMA1_STREAM5_IRQ);
 	dma_stream_reset(DMA1,DMA_STREAM5);
 	dma_set_priority(DMA1,DMA_STREAM5,DMA_SxCR_PL_LOW);
@@ -97,8 +98,8 @@ void dma_setup(void)
 /* The array v[] is filled with the waveform data to be output */
 	dma_set_memory_address(DMA1,DMA_STREAM5,(uint32_t) v);
 	dma_set_number_of_data(DMA1,DMA_STREAM5,256);
-	dma_enable_transfer_complete_interrupt(DMA1, DMA_STREAM5);
 	dma_channel_select(DMA1, DMA_STREAM5, DMA_SxCR_CHSEL_7);
+	dma_enable_transfer_complete_interrupt(DMA1, DMA_STREAM5);
 	dma_enable_stream(DMA1,DMA_STREAM5);
 }
 
@@ -106,7 +107,7 @@ void dma_setup(void)
 void dac_setup(void)
 {
 /* Enable the DAC clock on APB1 */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_DACEN);
+	rcc_periph_clock_enable(RCC_DAC);
 /* Setup the DAC channel 1, with timer 2 as trigger source. Assume the DAC has
 woken up by the time the first transfer occurs */
 	dac_trigger_enable(CHANNEL_1);

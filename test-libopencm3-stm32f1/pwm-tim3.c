@@ -34,10 +34,11 @@ void hardware_setup(void)
 /* Enable GPIOB and GPIOA clocks.
    APB2 (High Speed Advanced Peripheral Bus) peripheral clock enable register (RCC_APB2ENR)
    Set RCC_APB2ENR_IOPAEN for port A and RCC_APB2ENR_IOPAEN for Alternate Function clock */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN);
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_AFIO);
 
 /* Enable TIM3 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
+	rcc_periph_clock_enable(RCC_TIM3);
 
 /* Set port PA6 to 'alternate function output push-pull'. */
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ,

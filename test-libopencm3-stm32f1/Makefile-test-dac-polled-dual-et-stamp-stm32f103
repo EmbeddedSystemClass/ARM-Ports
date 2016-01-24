@@ -1,6 +1,6 @@
 # Basic makefile K Sarkies
 
-PROJECT		= flash-rw-et-stm32f103
+PROJECT		= test-dac-polled-dual-et-stamp-stm32f103
 
 include Makefile-Base-stm32f103
 

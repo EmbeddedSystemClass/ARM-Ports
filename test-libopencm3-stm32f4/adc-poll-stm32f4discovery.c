@@ -1,4 +1,6 @@
-/* STM32F4 Test of ADC function by blinking at a different rate with analogue control
+/* STM32F4 Test of ADC function
+
+Blink LED at a different rate with analogue control.
 
 Tests:
 ADC basic direct conversion start and direct register read
@@ -28,9 +30,9 @@ An analogue signal is inserted into pin PA1 (ADC123 IN1).
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f4/rcc.h>
-#include <libopencm3/stm32/f4/gpio.h>
-#include <libopencm3/stm32/f4/adc.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/adc.h>
 
 /*--------------------------------------------------------------------------*/
 
@@ -44,7 +46,8 @@ void clock_setup(void)
 void gpio_setup(void)
 {
 /* GPIO LED ports */
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN | RCC_AHB1ENR_IOPAEN);
+	rcc_periph_clock_enable(RCC_GPIOD);
+	rcc_periph_clock_enable(RCC_GPIOA);
 	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 		      GPIO12 | GPIO13 | GPIO14 | GPIO15);
 	gpio_set_output_options(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ,
@@ -55,16 +58,16 @@ void gpio_setup(void)
 
 void adc_setup(void)
 {
-    rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
+	rcc_periph_clock_enable(RCC_ADC1);
 /* Set port PA1 for ADC1 to analogue mode. */
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO1);
 
 /* Setup the ADC */
-	u8 channel[1] = { ADC_CHANNEL1 };
+	uint8_t channel[1] = { ADC_CHANNEL1 };
     adc_set_clk_prescale(ADC_CCR_ADCPRE_BY2);
     adc_disable_scan_mode(ADC1);
     adc_set_single_conversion_mode(ADC1);
-    adc_set_sample_time(ADC1, ADC_CHANNEL1, ADC_SMPR1_SMP_1DOT5CYC);
+    adc_set_sample_time(ADC1, ADC_CHANNEL1, ADC_SMPR_SMP_3CYC);
 	adc_set_multi_mode(ADC_CCR_MULTI_INDEPENDENT);
     adc_set_regular_sequence(ADC1, 1, channel);
     adc_power_on(ADC1);
@@ -74,7 +77,7 @@ void adc_setup(void)
 
 int main(void)
 {
-	u32 i;
+	uint32_t i;
 
 	clock_setup();
 	gpio_setup();
@@ -83,11 +86,11 @@ int main(void)
 	while (1) {
         adc_start_conversion_regular(ADC1);
         while (!adc_eoc(ADC1));
-        u16 value = adc_read_regular(ADC1);
+        uint16_t value = adc_read_regular(ADC1);
 //    }
 /* Blink the LED (PD12, PD13) on the board rate proportional to adc output. */
 //	while (1) {
-		u32 count = 195*value;
+		uint32_t count = 195*value;
 		gpio_toggle(GPIOD, GPIO12);
 		for (i = 0; i < count; i++) __asm__("nop");
 		gpio_toggle(GPIOD, GPIO13);

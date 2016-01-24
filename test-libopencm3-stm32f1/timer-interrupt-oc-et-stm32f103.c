@@ -21,16 +21,18 @@ The board used is the ET-STM32F103 with LEDs on port B pins 8-15
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/f1/rcc.h>
-#include <libopencm3/stm32/f1/gpio.h>
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
-#include <libopencm3/dispatch/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 
 #define PERIOD 1152
 
 /* Globals */
-u32 cntr;
-u8 v[256];
+uint32_t cntr;
+uint8_t v[256];
+
+/*--------------------------------------------------------------------------*/
 
 void clock_setup(void)
 {
@@ -38,24 +40,31 @@ void clock_setup(void)
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 }
 
+/*--------------------------------------------------------------------------*/
+
 void gpio_setup(void)
 {
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN |
-								 RCC_APB2ENR_IOPCEN | RCC_APB2ENR_AFIOEN);
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_AFIO);
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ,
-		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
+                GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
+                GPIO12 | GPIO13 | GPIO14 | GPIO15);
 /* Digital Test output PC0 */
 	gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ,
-		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO0);
+                GPIO_CNF_OUTPUT_PUSHPULL, GPIO0);
 }
 
-/* Set the timer with a 1us clock by setting the prescaler. The APB clock is prescaled from the
-AHB clock which is itself prescaled from the system clock (72MHz). Assume both prescales are 1. */
+/*--------------------------------------------------------------------------*/
+/* Set the timer with a 1us clock by setting the prescaler. The APB clock is
+prescaled from the AHB clock which is itself prescaled from the system clock
+(72MHz). Assume both prescales are 1. */
 
 void timer_setup(void)
 {
 /* Enable TIM3 clock. */
-	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM3EN);
+	rcc_periph_clock_enable(RCC_TIM3);
 /* Enable TIM3 interrupt. */
 	nvic_enable_irq(NVIC_TIM3_IRQ);
 	timer_reset(TIM3);
@@ -84,16 +93,20 @@ void timer_setup(void)
 	timer_enable_irq(TIM3, TIM_DIER_CC1IE);
 }
 
+/*--------------------------------------------------------------------------*/
+
 void tim3_isr(void)
 {
 	if (timer_get_flag(TIM3, TIM_SR_CC1IF))
 	{
 /* Clear compare interrupt flag. */
 		timer_clear_flag(TIM3, TIM_SR_CC1IF);
-/* Toggle PC0 just to keep aware of activity and frequency. */
+/* Toggle LED on PB8 just to keep aware of activity and frequency. */
 		gpio_toggle(GPIOB, GPIO8);
 	}
 }
+
+/*--------------------------------------------------------------------------*/
 
 int main(void)
 {

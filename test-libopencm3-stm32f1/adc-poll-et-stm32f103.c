@@ -48,9 +48,10 @@ void clock_setup(void)
 void gpio_setup(void)
 {
 /* Enable AFIO, GPIOA, GPIOB and GPIOC clocks. */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN |
-                                 RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN |
-								 RCC_APB2ENR_AFIOEN);
+    rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_GPIOB);
+    rcc_periph_clock_enable(RCC_GPIOC);
+    rcc_periph_clock_enable(RCC_AFIO);
 /* GPIO LED ports */
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ,
 		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
@@ -65,7 +66,7 @@ void adc_setup(void)
 	gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
 		      GPIO_CNF_INPUT_ANALOG, GPIO1);
 /* Enable the ADC1 clock on APB2 */
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
+    rcc_periph_clock_enable(RCC_ADC1);
 /* Setup the ADC */
     adc_power_on(ADC1);
     adc_calibration(ADC1);

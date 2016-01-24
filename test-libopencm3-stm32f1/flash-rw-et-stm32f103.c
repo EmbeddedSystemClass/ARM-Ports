@@ -31,6 +31,9 @@
 #define FLASH_NOT_ERASED 0x81
 #define RESULT_OK 0
 
+/*--------------------------------------------------------------------------*/
+/* Prototypes*/
+
 /*hardware initialization*/
 static void init_system(void);
 static void init_usart(void);
@@ -44,208 +47,243 @@ static void flash_read_data(uint32_t start_address, uint16_t num_elements, uint8
 /*local functions to work with strings*/
 static void local_ltoa_hex(uint32_t value, uint8_t *out_string);
 
+/*--------------------------------------------------------------------------*/
+
 int main(void)
 {
-	uint32_t result = 0;
-	uint8_t str_send[SEND_BUFFER_SIZE], str_verify[SEND_BUFFER_SIZE];
+    uint32_t result = 0;
+    uint8_t str_send[SEND_BUFFER_SIZE], str_verify[SEND_BUFFER_SIZE];
 
-	init_system();
+    init_system();
 
-	while(1)
-	{
-		usart_send_string(USART1, (uint8_t*)"Please enter string to write into Flash memory:\n\r", SEND_BUFFER_SIZE);
-		usart_get_string(USART1, str_send, SEND_BUFFER_SIZE);
+    while(1)
+    {
+        usart_send_string(USART1,
+            (uint8_t*)"Please enter string to write into Flash memory:\n\r",
+            SEND_BUFFER_SIZE);
+        usart_get_string(USART1, str_send, SEND_BUFFER_SIZE);
 
+/* Erase FLASH data block */
         flash_clear_status_flags();
-		result = flash_erase_data(FLASH_OPERATION_ADDRESS);
+        result = flash_erase_data(FLASH_OPERATION_ADDRESS);
 
-		switch(result)
-		{
-		case RESULT_OK: /*everything ok*/
-			usart_send_string(USART1, (uint8_t*)"Flash erased OK", SEND_BUFFER_SIZE);
+        switch(result)
+        {
+        case RESULT_OK: /*everything ok*/
+            usart_send_string(USART1, (uint8_t*)"Flash erased OK",
+                SEND_BUFFER_SIZE);
             break;
-		case FLASH_NOT_ERASED: /*data read from Flash is different than written data*/
-			usart_send_string(USART1, (uint8_t*)"Flash memory not erased", SEND_BUFFER_SIZE);
-			break;
-		default: /*wrong flags' values in Flash Status Register (FLASH_SR)*/
-			usart_send_string(USART1, (uint8_t*)"Erase: Wrong value of FLASH_SR: ", SEND_BUFFER_SIZE);
-			local_ltoa_hex(result, str_send);
-			usart_send_string(USART1, str_send, SEND_BUFFER_SIZE);
-			break;
-		}
-		/*send end_of_line*/
-		usart_send_string(USART1, (uint8_t*)"\r\n", 3);
+        case FLASH_NOT_ERASED: /*data read from Flash is different than written data*/
+            usart_send_string(USART1, (uint8_t*)"Flash memory not erased",
+                SEND_BUFFER_SIZE);
+            break;
+        default: /*wrong flags' values in Flash Status Register (FLASH_SR)*/
+            usart_send_string(USART1, (uint8_t*)"Erase: Wrong value of FLASH_SR: ",
+                SEND_BUFFER_SIZE);
+            local_ltoa_hex(result, str_send);
+            usart_send_string(USART1, str_send, SEND_BUFFER_SIZE);
+            break;
+        }
+/*send end_of_line*/
+        usart_send_string(USART1, (uint8_t*)"\r\n", 3);
 
+/* Write ASCII string to FLASH */
         flash_clear_status_flags();
-		result = flash_program_data(FLASH_OPERATION_ADDRESS, str_send, SEND_BUFFER_SIZE);
+        result = flash_program_data(FLASH_OPERATION_ADDRESS, str_send, SEND_BUFFER_SIZE);
 
-		switch(result)
-		{
-		case RESULT_OK: /*everything ok*/
-			usart_send_string(USART1, (uint8_t*)"Verification of written data: ", SEND_BUFFER_SIZE);
-			flash_read_data(FLASH_OPERATION_ADDRESS, SEND_BUFFER_SIZE, str_verify);
-			usart_send_string(USART1, str_verify, SEND_BUFFER_SIZE);
-			break;
-		case FLASH_WRONG_DATA_WRITTEN: /*data read from Flash is different than written data*/
-			usart_send_string(USART1, (uint8_t*)"Wrong data written into flash memory", SEND_BUFFER_SIZE);
-			break;
-		default: /*wrong flags' values in Flash Status Register (FLASH_SR)*/
-			usart_send_string(USART1, (uint8_t*)"Program: Wrong value of FLASH_SR: ", SEND_BUFFER_SIZE);
-			local_ltoa_hex(result, str_send);
-			usart_send_string(USART1, str_send, SEND_BUFFER_SIZE);
-			break;
-		}
-		/*send end_of_line*/
-		usart_send_string(USART1, (uint8_t*)"\r\n", 3);
-	}
-	return 0;
+        switch(result)
+        {
+        case RESULT_OK: /*everything ok*/
+            usart_send_string(USART1, (uint8_t*)"Verification of written data: ",
+                SEND_BUFFER_SIZE);
+            flash_read_data(FLASH_OPERATION_ADDRESS, SEND_BUFFER_SIZE, str_verify);
+            usart_send_string(USART1, str_verify, SEND_BUFFER_SIZE);
+            break;
+        case FLASH_WRONG_DATA_WRITTEN: /*data read from Flash is different than written data*/
+            usart_send_string(USART1, (uint8_t*)"Wrong data written into flash memory",
+                SEND_BUFFER_SIZE);
+            break;
+        default: /*wrong flags' values in Flash Status Register (FLASH_SR)*/
+            usart_send_string(USART1, (uint8_t*)"Program: Wrong value of FLASH_SR: ",
+                SEND_BUFFER_SIZE);
+            local_ltoa_hex(result, str_send);
+            usart_send_string(USART1, str_send, SEND_BUFFER_SIZE);
+            break;
+        }
+/*send end_of_line*/
+        usart_send_string(USART1, (uint8_t*)"\r\n", 3);
+    }
+    return 0;
 }
+
+/*--------------------------------------------------------------------------*/
 
 static void init_system(void)
 {
-	/* setup SYSCLK to work with 64Mhz HSI */
-	rcc_clock_setup_in_hse_8mhz_out_72mhz();
-	init_usart();
+/* setup SYSCLK to work with 64Mhz HSI */
+    rcc_clock_setup_in_hse_8mhz_out_72mhz();
+    init_usart();
 }
+
+/*--------------------------------------------------------------------------*/
 
 static void init_usart(void)
 {
-	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_USART1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN);
+/* Enable clocks for GPIO port A (for GPIO_USART1_TX) and USART1. */
+    rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_AFIO);
+    rcc_periph_clock_enable(RCC_USART1);
 
-	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);
-	gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
+    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,
+                  GPIO_USART1_TX);
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
 
-	usart_set_baudrate(USART1, 115200);
-	usart_set_databits(USART1, 8);
-	usart_set_stopbits(USART1, USART_STOPBITS_1);
-	usart_set_parity(USART1, USART_PARITY_NONE);
-	usart_set_mode(USART1, USART_MODE_TX_RX);
-	usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
-	usart_enable(USART1);
+    usart_set_baudrate(USART1, 115200);
+    usart_set_databits(USART1, 8);
+    usart_set_stopbits(USART1, USART_STOPBITS_1);
+    usart_set_parity(USART1, USART_PARITY_NONE);
+    usart_set_mode(USART1, USART_MODE_TX_RX);
+    usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+    usart_enable(USART1);
 }
+
+/*--------------------------------------------------------------------------*/
 
 static void usart_send_string(uint32_t usart, uint8_t *string, uint16_t str_size)
 {
-	uint16_t iter = 0;
-	do
-	{
-		usart_send_blocking(usart, string[iter++]);
-	}while(string[iter] != 0 && iter < str_size);
+    uint16_t iter = 0;
+    do
+    {
+        usart_send_blocking(usart, string[iter++]);
+    }while(string[iter] != 0 && iter < str_size);
 }
+
+/*--------------------------------------------------------------------------*/
 
 static void usart_get_string(uint32_t usart, uint8_t *out_string, uint16_t str_max_size)
 {
-	uint8_t sign = 0;
-	uint16_t iter = 0;
+    uint8_t sign = 0;
+    uint16_t iter = 0;
 
-	while(iter < str_max_size)
-	{
-		sign = usart_recv_blocking(usart);
+    while(iter < str_max_size)
+    {
+        sign = usart_recv_blocking(usart);
 
 #if USART_ECHO_EN == 1
-		usart_send_blocking(usart, sign);
+        usart_send_blocking(usart, sign);
 #endif
 
-		if(sign != '\n' && sign != '\r')
-			out_string[iter++] = sign;
-		else
-		{
-			out_string[iter] = 0;
-			usart_send_string(USART1, (uint8_t*)"\r\n", 3);
-			break;
-		}
-	}
+        if(sign != '\n' && sign != '\r')
+            out_string[iter++] = sign;
+        else
+        {
+            out_string[iter] = 0;
+            usart_send_string(USART1, (uint8_t*)"\r\n", 3);
+            break;
+        }
+    }
 }
+
+/*--------------------------------------------------------------------------*/
 
 static uint32_t flash_erase_data(uint32_t start_address)
 {
-	uint16_t iter;
-	uint32_t page_address = start_address;
-	uint32_t flash_status = 0;
+    uint16_t iter;
+    uint32_t page_address = start_address;
+    uint32_t flash_status = 0;
 
-	/*check if start_address is in proper range*/
-	if((start_address - FLASH_BASE) >= (FLASH_PAGE_SIZE * (FLASH_PAGE_NUM_MAX+1)))
-		return 1;
+/*check if start_address is in proper range*/
+    if((start_address - FLASH_BASE) >= (FLASH_PAGE_SIZE * (FLASH_PAGE_NUM_MAX+1)))
+        return 1;
 
-	/*calculate current page address*/
-	if(start_address % FLASH_PAGE_SIZE)
-		page_address -= (start_address % FLASH_PAGE_SIZE);
+/*calculate current page address*/
+    if(start_address % FLASH_PAGE_SIZE)
+        page_address -= (start_address % FLASH_PAGE_SIZE);
 
-	flash_unlock();
+    flash_unlock();
 
-	/*Erasing page*/
-	flash_erase_page(page_address);
-	flash_status = flash_get_status_flags();
-	if(flash_status != FLASH_SR_EOP)
-		return flash_status;
+/*Erasing page*/
+    flash_erase_page(page_address);
+    flash_status = flash_get_status_flags();
+    if(flash_status != FLASH_SR_EOP)
+        return flash_status;
 
-	for(iter=0; iter<FLASH_PAGE_SIZE; iter ++)
-	{
-    	if(*((uint8_t*)(page_address+iter)) != 0xFF)
+    for(iter=0; iter<FLASH_PAGE_SIZE; iter ++)
+    {
+        if(*((uint8_t*)(page_address+iter)) != 0xFF)
             return FLASH_NOT_ERASED;
     }
 
-	return 0;
+    return 0;
 }
 
-static uint32_t flash_program_data(uint32_t start_address, uint8_t *input_data, uint16_t num_elements)
+/*--------------------------------------------------------------------------*/
+
+static uint32_t flash_program_data(uint32_t start_address, uint8_t *input_data,
+                                   uint16_t num_elements)
 {
-	uint16_t iter;
-	uint32_t current_address = start_address;
-	uint32_t page_address = start_address;
-	uint32_t flash_status = 0;
+    uint16_t iter;
+    uint32_t current_address = start_address;
+    uint32_t page_address = start_address;
+    uint32_t flash_status = 0;
 
-	/*check if start_address is in proper range*/
-	if((start_address - FLASH_BASE) >= (FLASH_PAGE_SIZE * (FLASH_PAGE_NUM_MAX+1)))
-		return 1;
+/*check if start_address is in proper range*/
+    if((start_address - FLASH_BASE) >= (FLASH_PAGE_SIZE * (FLASH_PAGE_NUM_MAX+1)))
+        return 1;
 
-	/*calculate current page address*/
-	if(start_address % FLASH_PAGE_SIZE)
-		page_address -= (start_address % FLASH_PAGE_SIZE);
+/*calculate current page address*/
+    if(start_address % FLASH_PAGE_SIZE)
+        page_address -= (start_address % FLASH_PAGE_SIZE);
 
-	flash_unlock();
+    flash_unlock();
 
-	/*programming flash memory*/
-	for(iter=0; iter<num_elements; iter += 4)
-	{
-		/*programming word data*/
-		flash_program_word(current_address+iter, *((uint32_t*)(input_data + iter)));
-    	flash_lock();
-		flash_status = flash_get_status_flags();
-		if(flash_status != FLASH_SR_EOP)
-			return flash_status;
+/*programming flash memory*/
+    for(iter=0; iter<num_elements; iter += 4)
+    {
+        /*programming word data*/
+        flash_program_word(current_address+iter, *((uint32_t*)(input_data + iter)));
+        flash_lock();
+        flash_status = flash_get_status_flags();
+        if(flash_status != FLASH_SR_EOP)
+            return flash_status;
 
-		/*verify if correct data is programmed*/
-		if(*((uint32_t*)(current_address+iter)) != *((uint32_t*)(input_data + iter)))
-			return FLASH_WRONG_DATA_WRITTEN;
-	}
+/*verify if correct data is programmed*/
+        if(*((uint32_t*)(current_address+iter)) != *((uint32_t*)(input_data + iter)))
+            return FLASH_WRONG_DATA_WRITTEN;
+    }
 
-	return 0;
+    return 0;
 }
 
-static void flash_read_data(uint32_t start_address, uint16_t num_elements, uint8_t *output_data)
+/*--------------------------------------------------------------------------*/
+
+static void flash_read_data(uint32_t start_address, uint16_t num_elements,
+                            uint8_t *output_data)
 {
-	uint16_t iter;
-	uint32_t *memory_ptr= (uint32_t*)start_address;
+    uint16_t iter;
+    uint32_t *memory_ptr= (uint32_t*)start_address;
 
-	for(iter=0; iter<num_elements/4; iter++)
-	{
-		*(uint32_t*)output_data = *(memory_ptr + iter);
-		output_data += 4;
-	}
+    for(iter=0; iter<num_elements/4; iter++)
+    {
+        *(uint32_t*)output_data = *(memory_ptr + iter);
+        output_data += 4;
+    }
 }
+
+/*--------------------------------------------------------------------------*/
 
 static void local_ltoa_hex(uint32_t value, uint8_t *out_string)
 {
-	uint8_t iter;
+    uint8_t iter;
 
-	/*end of string*/
-	out_string += 8;
-	*(out_string--) = 0;
+/*end of string*/
+    out_string += 8;
+    *(out_string--) = 0;
 
-	for(iter=0; iter<8; iter++)
-	{
-		*(out_string--) = (((value&0xf) > 0x9) ? (0x40 + ((value&0xf) - 0x9)) : (0x30 | (value&0xf)));
-		value >>= 4;
-	}
+    for(iter=0; iter<8; iter++)
+    {
+        *(out_string--) = (((value&0xf) > 0x9) ? (0x40 + ((value&0xf) - 0x9)) :
+                          (0x30 | (value&0xf)));
+        value >>= 4;
+    }
 }

@@ -87,10 +87,10 @@ int main(void)
 	buffer_init(receive_buffer,BUFFER_SIZE);
 	usart_enable_tx_interrupt(USART1);
 
-	/* Send a greeting message on USART1. */
+/* Send a greeting message on USART1. */
 	usart_print_string("Dual ADC 8 channels 0-7 DMA IRQ\r\n");
 
-	/* Setup array of selected channels for conversion */
+/* Setup array of selected channels for conversion */
 	for (i = 0; i < n_conv/2; i++)
 	{
 		channel_array[i] = i;
@@ -101,7 +101,7 @@ int main(void)
 		channel_array[i] = i+n_conv/2;
 	}
 	adc_set_regular_sequence(ADC2, n_conv/2, channel_array);
-	/* Clear the data array for first pass */
+/* Clear the data array for first pass */
 	for (i = 0; i < n_conv/2; i++)
 	{
 		v[i] = 0;
@@ -117,10 +117,10 @@ int main(void)
 	usart_print_int((ADC2_SQR3 >> 10) % 32);
 	usart_print_int((ADC2_SQR3 >> 15) % 32);
 	usart_print_string("\r\n");
-	/* Continously convert and send data array on each timer trigger. */
+/* Continously convert and send data array on each timer trigger. */
 	while (1)
 	{
-		/* Hang around until the next timer tick */
+/* Hang around until the next timer tick */
 		for (i = 0; i < 500; i++)
 		{
 			while (!timer_get_flag(TIM2, TIM_SR_CC1IF));
@@ -146,19 +146,19 @@ void clock_setup(void)
 /* USART 1 is configured for 38400 baud, no flow control and interrupt */
 void usart_setup(void)
 {
-	/* Enable clocks for GPIO port A (for GPIO_USART1_TX) and USART1. */
+/* Enable clocks for GPIO port A (for GPIO_USART1_TX) and USART1. */
     rcc_periph_clock_enable(RCC_GPIOA);
     rcc_periph_clock_enable(RCC_AFIO);
     rcc_periph_clock_enable(RCC_USART1);
-	/* Enable the USART1 interrupt. */
+/* Enable the USART1 interrupt. */
 	nvic_enable_irq(NVIC_USART1_IRQ);
-	/* Setup GPIO pin GPIO_USART1_RE_TX on GPIO port A for transmit. */
+/* Setup GPIO pin GPIO_USART1_RE_TX on GPIO port A for transmit. */
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ,
 		      GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);
-	/* Setup GPIO pin GPIO_USART1_RE_RX on GPIO port A for receive. */
+/* Setup GPIO pin GPIO_USART1_RE_RX on GPIO port A for receive. */
 	gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
 		      GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
-	/* Setup UART parameters. */
+/* Setup UART parameters. */
 	usart_set_baudrate(USART1, 38400);
 	usart_set_databits(USART1, 8);
 	usart_set_stopbits(USART1, USART_STOPBITS_1);
@@ -193,7 +193,7 @@ need to grab it before the next conversions start. This must be called after eac
 to reset the memory buffer to the beginning. */
 void dma_setup(void)
 {
-	/* Enable DMA1 Clock */
+/* Enable DMA1 Clock */
 	rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_DMA1EN);
 	dma_channel_reset(DMA1,DMA_CHANNEL1);
 	dma_set_priority(DMA1,DMA_CHANNEL1,DMA_CCR_PL_LOW);
@@ -216,7 +216,7 @@ void dma_setup(void)
 channels once through then stops. DMA enabled to collect data. */
 void adc_setup(void)
 {
-	/* Enable clocks for ADCs */
+/* Enable clocks for ADCs */
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN |
 				    RCC_APB2ENR_AFIOEN | RCC_APB2ENR_ADC1EN);
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_IOPAEN |
@@ -224,11 +224,12 @@ void adc_setup(void)
 	nvic_enable_irq(NVIC_ADC1_2_IRQ);
 /* Set port PA bits 0-7 for ADC1 to analogue input. ADC2 uses the same ports. */
 	gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
-		      GPIO_CNF_INPUT_ANALOG, GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7);
-	/* Make sure the ADC doesn't run during config. */
+		      GPIO_CNF_INPUT_ANALOG, GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 |
+              GPIO5 | GPIO6 | GPIO7);
+/* Make sure the ADC doesn't run during config. */
 	adc_off(ADC1);
 	adc_off(ADC2);
-	/* Configure ADC1 for multiple conversion. */
+/* Configure ADC1 for multiple conversion. */
 	adc_enable_scan_mode(ADC1);
 	adc_set_single_conversion_mode(ADC1);
 	adc_enable_external_trigger_regular(ADC1, ADC_CR2_EXTSEL_SWSTART);
@@ -237,7 +238,7 @@ void adc_setup(void)
 	adc_enable_dma(ADC1);
 	adc_enable_eoc_interrupt(ADC1);
 	adc_set_dual_mode(ADC_CR1_DUALMOD_RSM);
-	/* Configure ADC2 for multiple conversion. */
+/* Configure ADC2 for multiple conversion. */
 	adc_enable_scan_mode(ADC2);
 	adc_set_single_conversion_mode(ADC2);
 	adc_enable_external_trigger_regular(ADC2, ADC_CR2_EXTSEL_SWSTART);
@@ -252,7 +253,7 @@ void adc_setup(void)
 	adc_reset_calibration(ADC1);
 	adc_calibration(ADC1);
 	adc_power_on(ADC2);
-	/* Wait for ADC starting up. */
+/* Wait for ADC starting up. */
 	for (i = 0; i < 800000; i++)    /* Wait a bit. */
 		__asm__("nop");
 	adc_reset_calibration(ADC2);
@@ -265,7 +266,7 @@ void adc_setup(void)
 reaches a preset value based on the output compare channel 1. */
 void timer_setup(void)
 {
-	/* Enable TIM2 clock. */
+/* Enable TIM2 clock. */
 	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_TIM2EN);
 	timer_reset(TIM2);
 /* Timer global mode: - Divider 4, Alignment edge, Direction up */
@@ -378,16 +379,16 @@ void usart1_isr(void)
 {
 	static uint16_t data;
 
-	/* Check if we were called because of RXNE. */
+/* Check if we were called because of RXNE. */
 	if (usart_get_flag(USART1,USART_SR_RXNE))
 	{
-		/* If buffer full we'll just drop it */
+/* If buffer full we'll just drop it */
 		buffer_put(receive_buffer, (uint8_t) usart_recv(USART1));
 	}
-	/* Check if we were called because of TXE. */
+/* Check if we were called because of TXE. */
 	if (usart_get_flag(USART1,USART_SR_TXE))
 	{
-		/* If buffer empty, disable the tx interrupt */
+/* If buffer empty, disable the tx interrupt */
 		data = buffer_get(send_buffer);
 		if ((data & 0xFF00) > 0) usart_disable_tx_interrupt(USART1);
 		else usart_send(USART1, (data & 0xFF));

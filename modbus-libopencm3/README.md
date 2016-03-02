@@ -23,9 +23,7 @@ Two examples are provided:
 
 FreeMODBUS-1.5.0 is the latest version, now some years old.
 
-More information is provided at:
-
-http://www.jiggerjuice.info/electronics/projects/arm/modbus-stm32f103-port.html
+More information is provided at [Jiggerjuice](http://www.jiggerjuice.info/electronics/projects/arm/modbus-stm32f103-port.html)
 
 (c) K. Sarkies 29/06/2015
 

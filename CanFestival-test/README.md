@@ -25,9 +25,7 @@ a version numbering system. The latest version can be accessed through the
 CanFestival homepage from a Mercurial repository at dev.automforge.net.
 Sourceforge has a very old version from 2007.
 
-More information is provided at:
-
-http://www.jiggerjuice.info/electronics/projects/arm/canfestival-stm32f103-port.html
+More information is provided at [Jiggerjuice](http://www.jiggerjuice.info/electronics/projects/arm/canfestival-stm32f103-port.html)
 
 (c) K. Sarkies 22/01/2016
 

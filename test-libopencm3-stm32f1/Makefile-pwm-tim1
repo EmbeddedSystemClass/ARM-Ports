@@ -1,6 +1,7 @@
 # Basic makefile K Sarkies
 
-PROJECT		= pwm-tim1
+PROJECT		    = pwm-tim1
+LDSCRIPT	    = stm32-h103RBT6.ld
 
 include Makefile-Base-stm32f103
 

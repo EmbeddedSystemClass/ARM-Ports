@@ -5,10 +5,14 @@ Many of these examples can be found in the libopencm3-examples. Here they are
 modified slightly to run on the ET-STAMP-STM32 and ET-STM32F103 boards.
 
 The makefiles use the load script for the ET-STM32F103 which is STM32F103RBT6
-with 128kB FLASH memory and 20K RAM, so it is a medium density device.
+with 128kB FLASH memory and 20K RAM, so it is a medium density device. Do not
+use this with the tests aimed at the Stamp module as the memory sizes are
+incompatible.
 
 The ET-ARM Stamp module also works. This has a STM32F103RET6 which is a
-HD device with 512K FLASH, 64K SRAM.
+high density device with 512K FLASH, 64K SRAM. The Makefiles for the Stamp
+include the load script for the STM32F103RET6 but will work with all tests
+having the load script for the STM32F103RBT6.
 
 Compile these with
 $ make -f Makefile-*name*
@@ -57,6 +61,8 @@ where *name* is the root name of the file.
 * **test-dac-dma-et-stamp-stm32f103.c**
 * **test-dac-polled-dual-et-stamp-stm32f103.c**
 * **test-dac-polled-et-stamp-stm32f103.c**
+* **test-toggle-ports-et-stamp-stm32f103.c** Simple port toggle for basic
+    go/nogo test. Modify source to select port.
 * **timer-interrupt-et-stamp-stm32.c**
     Test of timer IRQ. Timer 2 is set to 50Hz period. Uses update interrupt and
     toggles PA0 each interrupt event.

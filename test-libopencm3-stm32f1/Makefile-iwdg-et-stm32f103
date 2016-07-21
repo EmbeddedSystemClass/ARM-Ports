@@ -1,6 +1,7 @@
 # Basic makefile K Sarkies
 
-PROJECT		= iwdg-et-stm32f103
+PROJECT		    = iwdg-et-stm32f103
+LDSCRIPT	    = stm32-h103RBT6.ld
 
 include Makefile-Base-stm32f103
 

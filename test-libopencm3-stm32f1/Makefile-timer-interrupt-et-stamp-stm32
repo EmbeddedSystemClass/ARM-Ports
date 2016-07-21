@@ -1,6 +1,7 @@
 # Basic makefile K Sarkies
 
-PROJECT		= timer-interrupt-et-stamp-stm32
+PROJECT		    = timer-interrupt-et-stamp-stm32
+LDSCRIPT	    = stm32-h103RET6.ld
 
 include Makefile-Base-stm32f103
 

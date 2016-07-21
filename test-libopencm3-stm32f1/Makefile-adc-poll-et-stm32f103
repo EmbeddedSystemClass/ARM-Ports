@@ -1,6 +1,7 @@
 # Basic makefile K Sarkies
 
-PROJECT		= adc-poll-et-stm32f103
+PROJECT		    = adc-poll-et-stm32f103
+LDSCRIPT	    = stm32-h103RBT6.ld
 
 include Makefile-Base-stm32f103
 

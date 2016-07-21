@@ -3,7 +3,10 @@
 A Digital test output is provided on PC0 for triggering
 Timer 2 is setup without output to provide a timed interrupt and
 move preset data to the DAC.
-PA4 is provided for the DAC output
+
+PA4 is provided for the DAC1 output on channel 1.
+
+Smaller STM32F103 devices as in the ET dev board do not have DAC.
 */
 
 /*

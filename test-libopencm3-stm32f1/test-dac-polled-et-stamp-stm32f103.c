@@ -1,14 +1,16 @@
 /* DAC test with DMA and timer 2 trigger
 
+A Digital test output is provided on PC0 for triggering
+Timer 2 is setup without output to provide a timed interrupt.
+PA4 is provided for the DAC1 channel 1 output.
+
 The DAC is setup with software trigger.
-Timer 2 ISR is used to move preset array data to the DAC
+Timer 2 ISR is used to move preset array data to the DAC.
+
+Smaller STM32F103 devices as in the ET dev board do not have DAC.
 */
 
 /*
- * A Digital test output is provided on PC0 for triggering
- * Timer 2 is setup without output to provide a timed interrupt.
- * PA4 is provided for the DAC output
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -151,9 +153,7 @@ int main(void)
 	timer_setup();
 	dac_setup();
 
-	while (1) {
-
-	}
+	while (1);
 
 	return 0;
 }

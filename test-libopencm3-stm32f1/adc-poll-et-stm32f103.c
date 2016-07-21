@@ -32,7 +32,7 @@ The board used is the ET-STM32F103 with LEDs on port B pins 8-15
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/f1/adc.h>
+#include <libopencm3/stm32/adc.h>
 
 /*--------------------------------------------------------------------------*/
 
@@ -54,23 +54,22 @@ void gpio_setup(void)
     rcc_periph_clock_enable(RCC_AFIO);
 /* GPIO LED ports */
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_2_MHZ,
-		      GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
-              GPIO12 | GPIO13 | GPIO14 | GPIO15);
+		          GPIO_CNF_OUTPUT_PUSHPULL, GPIO8 | GPIO9 | GPIO10 | GPIO11 |
+                  GPIO12 | GPIO13 | GPIO14 | GPIO15);
 }
 
 /*--------------------------------------------------------------------------*/
 
 void adc_setup(void)
 {
-/* Set port PA1 for ADC1 to analogue input. */
-	gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
-		      GPIO_CNF_INPUT_ANALOG, GPIO1);
+/* Set port PA4 for ADC1 to analogue input. */
+	gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO4);
 /* Enable the ADC1 clock on APB2 */
     rcc_periph_clock_enable(RCC_ADC1);
 /* Setup the ADC */
     adc_power_on(ADC1);
     adc_calibration(ADC1);
-	uint8_t channel[1] = { ADC_CHANNEL1 };
+	uint8_t channel[1] = { ADC_CHANNEL4 };
     adc_set_regular_sequence(ADC1, 1, channel);
 }
 

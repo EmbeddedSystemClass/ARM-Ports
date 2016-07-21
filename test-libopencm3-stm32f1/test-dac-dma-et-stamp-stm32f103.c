@@ -3,6 +3,8 @@
 The DAC is setup with timer 2 trigger using the OC1 output.
 DMA is used to move data from a predefined array in circular mode.
 DMA ISR on transfer complete is used to toggle a port for CRO trigger.
+
+Smaller STM32F103 devices as in the ET dev board do not have DAC.
 */
 
 /*

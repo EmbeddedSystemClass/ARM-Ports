@@ -2,6 +2,7 @@
 
 PROJECT		    = adc-dual-stm32f103
 CFILES		    += buffer.c
+LDSCRIPT	    = stm32-h103RBT6.ld
 
 include Makefile-Base-stm32f103
 

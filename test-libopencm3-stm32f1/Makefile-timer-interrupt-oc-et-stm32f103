@@ -1,6 +1,7 @@
 # Basic makefile K Sarkies
 
-PROJECT		= timer-interrupt-oc-et-stm32f103
+PROJECT		    = timer-interrupt-oc-et-stm32f103
+LDSCRIPT	    = stm32-h103RBT6.ld
 
 include Makefile-Base-stm32f103
 

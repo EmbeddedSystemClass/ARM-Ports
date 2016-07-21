@@ -1,25 +1,30 @@
 /* STM32F1 Test of timer IRQ using Output Compare
 
 The board used is the ET-STM32F103 with LEDs on port B pins 8-15
-*/
 
-/*
- * A Digital test output is provided on PC0 for triggering
- * Timer 3 is setup without output compare to provide a timed interrupt.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+A Digital test output is provided on PC0 for triggering
+Timer 3 is setup without output compare to provide a timed interrupt.
+
+*/
+/****************************************************************************
+ *   Copyright (C) 2016 by Ken Sarkies                                      *
+ *   ksarkies@trinity.asn.au                                                *
+ *                                                                          *
+ *   This program is free software; you can redistribute it and/or     *
+ *   modify it under the terms of the GNU General Public License as         *
+ *   published bythe Free Software Foundation; either version 2 of the      *
+ *   License, or (at your option) any later version.                        *
+ *                                                                          *
+ *   This program is distributed in the hope that it will be useful,   *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
+ *   GNU General Public License for more details.                           *
+ *                                                                          *
+ *   You should have received a copy of the GNU General Public License      *
+ *   along with This program. If not, write to the                      *
+ *   Free Software Foundation, Inc.,                                        *
+ *   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.              *
+ ***************************************************************************/
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>

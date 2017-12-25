@@ -73,14 +73,14 @@ F 1 "Earth" H 2100 5050 50  0001 C CNN
 F 2 "" H 2100 5200 50  0001 C CNN
 F 3 "" H 2100 5200 50  0001 C CNN
 	1    2100 5200
-	1    0    0    -1  
+	0    1    1    0   
 $EndComp
 $Comp
 L C C5
 U 1 1 5A152726
 P 1550 4450
 F 0 "C5" H 1500 4200 50  0000 L CNN
-F 1 "100nF" H 1350 4750 50  0000 L CNN
+F 1 "100nF" H 1600 4550 50  0000 L CNN
 F 2 "stamp-stm32f:SM0603_Capa" H 1588 4300 50  0001 C CNN
 F 3 "" H 1550 4450 50  0001 C CNN
 	1    1550 4450
@@ -89,23 +89,23 @@ $EndComp
 $Comp
 L C C7
 U 1 1 5A152883
-P 1900 4850
-F 0 "C7" H 1925 4950 50  0000 L CNN
-F 1 "100nF" H 1650 4750 50  0000 L CNN
-F 2 "stamp-stm32f:SM0603_Capa" H 1938 4700 50  0001 C CNN
-F 3 "" H 1900 4850 50  0001 C CNN
-	1    1900 4850
+P 950 5150
+F 0 "C7" H 975 5250 50  0000 L CNN
+F 1 "100nF" H 700 5050 50  0000 L CNN
+F 2 "stamp-stm32f:SM0603_Capa" H 988 5000 50  0001 C CNN
+F 3 "" H 950 5150 50  0001 C CNN
+	1    950  5150
 	1    0    0    -1  
 $EndComp
 $Comp
 L Earth #PWR02
 U 1 1 5A1528C2
-P 1900 5000
-F 0 "#PWR02" H 1900 4750 50  0001 C CNN
-F 1 "Earth" H 1900 4850 50  0001 C CNN
-F 2 "" H 1900 5000 50  0001 C CNN
-F 3 "" H 1900 5000 50  0001 C CNN
-	1    1900 5000
+P 950 5300
+F 0 "#PWR02" H 950 5050 50  0001 C CNN
+F 1 "Earth" H 950 5150 50  0001 C CNN
+F 2 "" H 950 5300 50  0001 C CNN
+F 3 "" H 950 5300 50  0001 C CNN
+	1    950  5300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -124,7 +124,7 @@ L CP C3
 U 1 1 5A152942
 P 1250 4450
 F 0 "C3" H 1250 4700 50  0000 L CNN
-F 1 "10uF" H 1250 4150 50  0000 L CNN
+F 1 "10uF" H 1000 4350 50  0000 L CNN
 F 2 "stamp-stm32f:SM1206POL" H 1288 4300 50  0001 C CNN
 F 3 "" H 1250 4450 50  0001 C CNN
 	1    1250 4450
@@ -135,13 +135,13 @@ L L L1
 U 1 1 5A15298B
 P 1100 4300
 F 0 "L1" V 1200 4300 50  0000 C CNN
-F 1 "L" V 950 4350 50  0000 C CNN
+F 1 "100nH" V 1050 4350 50  0000 C CNN
 F 2 "stamp-stm32f:R_0805" H 1100 4300 50  0001 C CNN
 F 3 "" H 1100 4300 50  0001 C CNN
 	1    1100 4300
 	0    -1   -1   0   
 $EndComp
-Text GLabel 1900 4700 1    60   Input ~ 0
+Text GLabel 950  4800 0    60   Input ~ 0
 3.3V
 Text GLabel 950  4300 0    60   Input ~ 0
 3.3V
@@ -507,71 +507,6 @@ F 3 "" H 8550 2050 50  0001 C CNN
 	1    8550 2050
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2100 4800 2100 5200
-Wire Wire Line
-	2100 4400 2100 4700
-Wire Wire Line
-	2100 4700 1900 4700
-Wire Wire Line
-	1250 4300 2100 4300
-Connection ~ 1900 7000
-Connection ~ 1250 4300
-Connection ~ 1550 4300
-Connection ~ 2100 4500
-Connection ~ 2100 4600
-Connection ~ 2100 4700
-Connection ~ 2100 4900
-Connection ~ 2100 5000
-Connection ~ 2100 5100
-Connection ~ 2100 5200
-Wire Wire Line
-	1800 7000 2100 7000
-Wire Wire Line
-	3900 5650 3900 6500
-Wire Wire Line
-	3900 5650 4300 5650
-Connection ~ 3900 6000
-Wire Wire Line
-	1100 3500 1750 3500
-Wire Wire Line
-	1750 3500 1750 3600
-Wire Wire Line
-	1750 3600 2100 3600
-Wire Wire Line
-	1100 3800 1750 3800
-Wire Wire Line
-	1750 3800 1750 3700
-Wire Wire Line
-	1750 3700 2100 3700
-Wire Wire Line
-	1250 5600 2150 5600
-Connection ~ 1550 5600
-Connection ~ 1900 5600
-Wire Wire Line
-	7650 4800 7900 4800
-Wire Wire Line
-	7900 4800 7900 4850
-Wire Wire Line
-	7900 4850 8050 4850
-Wire Wire Line
-	7650 5100 7900 5100
-Wire Wire Line
-	7900 5100 7900 5050
-Wire Wire Line
-	7900 5050 8050 5050
-Wire Wire Line
-	9600 4850 9750 4850
-Wire Wire Line
-	9750 4850 9750 4800
-Wire Wire Line
-	9750 4800 9950 4800
-Wire Wire Line
-	9600 5050 9750 5050
-Wire Wire Line
-	9750 5050 9750 5100
-Wire Wire Line
-	9750 5100 9950 5100
 $Comp
 L ICL3221 U2
 U 1 1 5A170B85
@@ -583,18 +518,6 @@ F 3 "" H 8850 5450 50  0001 C CNN
 	1    8850 5350
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	9600 5450 10050 5450
-Wire Wire Line
-	10050 5450 10050 5500
-Wire Wire Line
-	10050 5500 10400 5500
-Wire Wire Line
-	9600 5650 10050 5650
-Wire Wire Line
-	10050 5650 10050 5600
-Wire Wire Line
-	10050 5600 10400 5600
 Text GLabel 10400 5700 0    60   Input ~ 0
 3.3V
 $Comp
@@ -866,16 +789,6 @@ F 3 "" H 5700 5550 50  0001 C CNN
 	1    5700 5550
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	6000 5550 6300 5550
-Wire Wire Line
-	6000 5850 6450 5850
-Wire Wire Line
-	6300 5550 6300 5100
-Wire Wire Line
-	6300 5000 6450 5000
-Wire Wire Line
-	6450 5000 6450 5850
 Text GLabel 8050 5450 0    60   Input ~ 0
 PA9
 Text GLabel 8050 5650 0    60   Input ~ 0
@@ -891,17 +804,6 @@ F 3 "" H 7850 4400 50  0001 C CNN
 	1    7850 4400
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	8050 4450 8050 4250
-Wire Wire Line
-	8050 4250 7700 4250
-Connection ~ 7850 4250
-Connection ~ 8050 4250
-Wire Wire Line
-	7650 4650 8050 4650
-Wire Wire Line
-	7850 4550 7850 4650
-Connection ~ 7850 4650
 $Comp
 L C C14
 U 1 1 5A17C85B
@@ -1003,12 +905,182 @@ F 3 "" H 5650 7050 50  0001 C CNN
 	1    5650 7050
 	1    0    0    -1  
 $EndComp
+Text GLabel 5350 6950 0    60   Input ~ 0
+PB2
+$Comp
+L Earth #PWR024
+U 1 1 5A422CE7
+P 2100 5100
+F 0 "#PWR024" H 2100 4850 50  0001 C CNN
+F 1 "Earth" H 2100 4950 50  0001 C CNN
+F 2 "" H 2100 5100 50  0001 C CNN
+F 3 "" H 2100 5100 50  0001 C CNN
+	1    2100 5100
+	0    1    1    0   
+$EndComp
+$Comp
+L Earth #PWR025
+U 1 1 5A422D58
+P 2100 4800
+F 0 "#PWR025" H 2100 4550 50  0001 C CNN
+F 1 "Earth" H 2100 4650 50  0001 C CNN
+F 2 "" H 2100 4800 50  0001 C CNN
+F 3 "" H 2100 4800 50  0001 C CNN
+	1    2100 4800
+	0    1    1    0   
+$EndComp
+$Comp
+L C C15
+U 1 1 5A422DEB
+P 1300 5150
+F 0 "C15" H 1325 5250 50  0000 L CNN
+F 1 "2.2uF" H 1050 5050 50  0000 L CNN
+F 2 "stamp-stm32f:SM0603_Capa" H 1338 5000 50  0001 C CNN
+F 3 "" H 1300 5150 50  0001 C CNN
+	1    1300 5150
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C16
+U 1 1 5A422E84
+P 1600 5150
+F 0 "C16" H 1625 5250 50  0000 L CNN
+F 1 "2.2uF" H 1350 5050 50  0000 L CNN
+F 2 "stamp-stm32f:SM0603_Capa" H 1638 5000 50  0001 C CNN
+F 3 "" H 1600 5150 50  0001 C CNN
+	1    1600 5150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR026
+U 1 1 5A422F0C
+P 1300 5300
+F 0 "#PWR026" H 1300 5050 50  0001 C CNN
+F 1 "Earth" H 1300 5150 50  0001 C CNN
+F 2 "" H 1300 5300 50  0001 C CNN
+F 3 "" H 1300 5300 50  0001 C CNN
+	1    1300 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Earth #PWR027
+U 1 1 5A422F83
+P 1600 5300
+F 0 "#PWR027" H 1600 5050 50  0001 C CNN
+F 1 "Earth" H 1600 5150 50  0001 C CNN
+F 2 "" H 1600 5300 50  0001 C CNN
+F 3 "" H 1600 5300 50  0001 C CNN
+	1    1600 5300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2100 4400 2100 4700
+Wire Wire Line
+	2100 4700 1900 4700
+Wire Wire Line
+	1250 4300 2100 4300
+Connection ~ 1900 7000
+Connection ~ 1250 4300
+Connection ~ 1550 4300
+Connection ~ 2100 4500
+Connection ~ 2100 4600
+Connection ~ 2100 4700
+Wire Wire Line
+	1800 7000 2100 7000
+Wire Wire Line
+	3900 5650 3900 6500
+Wire Wire Line
+	3900 5650 4300 5650
+Connection ~ 3900 6000
+Wire Wire Line
+	1100 3500 1750 3500
+Wire Wire Line
+	1750 3500 1750 3600
+Wire Wire Line
+	1750 3600 2100 3600
+Wire Wire Line
+	1100 3800 1750 3800
+Wire Wire Line
+	1750 3800 1750 3700
+Wire Wire Line
+	1750 3700 2100 3700
+Wire Wire Line
+	1250 5600 2150 5600
+Connection ~ 1550 5600
+Connection ~ 1900 5600
+Wire Wire Line
+	7650 4800 7900 4800
+Wire Wire Line
+	7900 4800 7900 4850
+Wire Wire Line
+	7900 4850 8050 4850
+Wire Wire Line
+	7650 5100 7900 5100
+Wire Wire Line
+	7900 5100 7900 5050
+Wire Wire Line
+	7900 5050 8050 5050
+Wire Wire Line
+	9600 4850 9750 4850
+Wire Wire Line
+	9750 4850 9750 4800
+Wire Wire Line
+	9750 4800 9950 4800
+Wire Wire Line
+	9600 5050 9750 5050
+Wire Wire Line
+	9750 5050 9750 5100
+Wire Wire Line
+	9750 5100 9950 5100
+Wire Wire Line
+	9600 5450 10050 5450
+Wire Wire Line
+	10050 5450 10050 5500
+Wire Wire Line
+	10050 5500 10400 5500
+Wire Wire Line
+	9600 5650 10050 5650
+Wire Wire Line
+	10050 5650 10050 5600
+Wire Wire Line
+	10050 5600 10400 5600
+Wire Wire Line
+	6000 5550 6300 5550
+Wire Wire Line
+	6000 5850 6450 5850
+Wire Wire Line
+	6300 5550 6300 5100
+Wire Wire Line
+	6300 5000 6450 5000
+Wire Wire Line
+	6450 5000 6450 5850
+Wire Wire Line
+	8050 4250 8050 4450
+Wire Wire Line
+	7700 4250 8050 4250
+Connection ~ 7850 4250
+Connection ~ 8050 4250
+Wire Wire Line
+	7650 4650 8050 4650
+Wire Wire Line
+	7850 4550 7850 4650
+Connection ~ 7850 4650
 Connection ~ 1550 3500
 Connection ~ 1300 3500
 Connection ~ 1300 3800
 Connection ~ 1550 3800
-Text GLabel 5350 6950 0    60   Input ~ 0
-PB2
 Connection ~ 6200 5850
 Connection ~ 6200 5550
+Wire Wire Line
+	950  4800 1900 4800
+Wire Wire Line
+	1900 4800 1900 4700
+Wire Wire Line
+	1600 5000 2100 5000
+Wire Wire Line
+	950  4800 950  5000
+Wire Wire Line
+	2100 4900 1300 4900
+Wire Wire Line
+	1300 4900 1300 5000
 $EndSCHEMATC

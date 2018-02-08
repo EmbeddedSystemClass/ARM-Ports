@@ -227,8 +227,8 @@ void adc_setup(void)
 		      GPIO_CNF_INPUT_ANALOG, GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 |
               GPIO5 | GPIO6 | GPIO7);
 /* Make sure the ADC doesn't run during config. */
-	adc_off(ADC1);
-	adc_off(ADC2);
+	adc_power_off(ADC1);
+	adc_power_off(ADC2);
 /* Configure ADC1 for multiple conversion. */
 	adc_enable_scan_mode(ADC1);
 	adc_set_single_conversion_mode(ADC1);
@@ -250,14 +250,16 @@ void adc_setup(void)
 	uint32_t i;
 	for (i = 0; i < 800000; i++)    /* Wait a bit. */
 		__asm__("nop");
-	adc_reset_calibration(ADC1);
-	adc_calibration(ADC1);
+    adc_reset_calibration(ADC1);
+    adc_calibrate_async(ADC1);
+    while (adc_is_calibrating(ADC1));
 	adc_power_on(ADC2);
 /* Wait for ADC starting up. */
 	for (i = 0; i < 800000; i++)    /* Wait a bit. */
 		__asm__("nop");
 	adc_reset_calibration(ADC2);
-	adc_calibration(ADC2);
+	adc_calibrate_async(ADC2);
+    while (adc_is_calibrating(ADC2));
 }
 
 /*--------------------------------------------------------------------------*/

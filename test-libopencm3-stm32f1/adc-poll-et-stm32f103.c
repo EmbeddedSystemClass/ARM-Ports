@@ -68,7 +68,9 @@ void adc_setup(void)
     rcc_periph_clock_enable(RCC_ADC1);
 /* Setup the ADC */
     adc_power_on(ADC1);
-    adc_calibration(ADC1);
+    adc_reset_calibration(ADC1);
+    adc_calibrate_async(ADC1);
+    while (adc_is_calibrating(ADC1));
 	uint8_t channel[1] = { ADC_CHANNEL4 };
     adc_set_regular_sequence(ADC1, 1, channel);
 }

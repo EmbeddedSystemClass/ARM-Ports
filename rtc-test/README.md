@@ -2,7 +2,7 @@ Test of Deep Sleep mode on STM32F103
 ------------------------------------
 
 This is a test program to investigate the use of deep sleep modes, notably stop
-mode, for teh STM32F103. The RTC Alarm is needed for wakeup. The sleep mode
+mode, for the STM32F103. The RTC Alarm is needed for wakeup. The sleep mode
 used is Wait for Interrupt (wfi instruction) so that other asynchronous EXTI
 interrupts can be recognised and handled during the sleep period.
 

@@ -52,15 +52,35 @@ int main(void)
 		gpio_toggle(GPIOB, GPIO8);	/* LED on/off */
 		for (i = 0; i < period1; i++)	/* Wait a bit. */
 			__asm__("nop");
-		gpio_toggle(GPIOB, GPIO9);	/* LED on/off */
-		for (i = 0; i < period1; i++)	/* Wait a bit. */
-			__asm__("nop");
 		gpio_toggle(GPIOB, GPIO8);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO9);	/* LED on/off */
 		for (i = 0; i < period1; i++)	/* Wait a bit. */
 			__asm__("nop");
 		gpio_toggle(GPIOB, GPIO9);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO10);	/* LED on/off */
+		for (i = 0; i < period1; i++)	/* Wait a bit. */
+			__asm__("nop");
+		gpio_toggle(GPIOB, GPIO10);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO11);	/* LED on/off */
 		for (i = 0; i < period2; i++)	/* Wait a bit. */
 			__asm__("nop");
+		gpio_toggle(GPIOB, GPIO11);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO12);	/* LED on/off */
+		for (i = 0; i < period2; i++)	/* Wait a bit. */
+			__asm__("nop");
+		gpio_toggle(GPIOB, GPIO12);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO13);	/* LED on/off */
+		for (i = 0; i < period2; i++)	/* Wait a bit. */
+			__asm__("nop");
+		gpio_toggle(GPIOB, GPIO13);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO14);	/* LED on/off */
+		for (i = 0; i < period2; i++)	/* Wait a bit. */
+			__asm__("nop");
+		gpio_toggle(GPIOB, GPIO14);	/* LED on/off */
+		gpio_toggle(GPIOB, GPIO15);	/* LED on/off */
+		for (i = 0; i < period2; i++)	/* Wait a bit. */
+			__asm__("nop");
+		gpio_toggle(GPIOB, GPIO15);	/* LED on/off */
         if (j++ > 10)
         {
             period1 = 200000;

@@ -3,7 +3,7 @@
 This provides a basic CLI for running tests using the serial port to return
 data and receive commands. Sort of a poor man's JTAG.
 
-Terminal with baud rate 115200.
+Terminal with baud rate 38400.
 
 Adapt the GPIO initialization to suit.
 
@@ -124,7 +124,7 @@ void clock_setup(void)
 /*--------------------------------------------------------------------------*/
 /** @brief USART Setup
 
-USART 1 is configured for 115200 baud, no flow control, and interrupt.
+USART 1 is configured for 38400 baud, no flow control, and interrupt.
 */
 
 void usart_setup(void)
@@ -141,7 +141,7 @@ void usart_setup(void)
 	gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
 		      GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
 /* Setup UART parameters. */
-	usart_set_baudrate(USART1, 115200);
+	usart_set_baudrate(USART1, 38400);
 	usart_set_databits(USART1, 8);
 	usart_set_stopbits(USART1, USART_STOPBITS_1);
 	usart_set_parity(USART1, USART_PARITY_NONE);

@@ -165,36 +165,6 @@ void gpio_setup(void)
 /* Enable GPIO clocks. */
     rcc_peripheral_enable_clock(&RCC_APB2ENR,
                 RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN);
-/* PA0-5 inputs analogue for currents and voltages */
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG,
-			    GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5);
-/* PA6-7 inputs digital for interface status */
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT,
-			    GPIO6 | GPIO7);
-/* PC9,10,12,13 inputs digital for interface status */
-    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT,
-			    GPIO9 | GPIO10 | GPIO12 | GPIO13);
-/* PC8,11,14 outputs digital for circuit breaker resets (set low) */
-    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
-			    GPIO8 | GPIO11);
-    gpio_clear(GPIOA, GPIO8 | GPIO11);
-/* PB1,2,4,5 inputs digital for interface status */
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT,
-			    GPIO1 | GPIO2 | GPIO4 | GPIO5);
-/* PB0,3,6 outputs digital for circuit breaker resets (set low) */
-    gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
-			    GPIO0 | GPIO3 | GPIO6);
-    gpio_clear(GPIOB, GPIO0 | GPIO3 | GPIO6);
-/* PB8-13 outputs digital for battery selects (set low) and battery 1 reset */
-    gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
-			    GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14);
-    gpio_clear(GPIOB, GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14);
-/* PC0-5 inputs analogue for currents and voltages */
-    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG,
-			    GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5);
-/* PC6,7 inputs digital for interface status */
-    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT,
-			    GPIO6 | GPIO7);
 }
 
 /*--------------------------------------------------------------------------*/

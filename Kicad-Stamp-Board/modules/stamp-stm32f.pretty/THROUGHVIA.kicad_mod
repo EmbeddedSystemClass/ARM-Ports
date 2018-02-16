@@ -1,0 +1,10 @@
+(module THROUGHVIA (layer F.Cu) (tedit 5A8651AD)
+  (fp_text reference Ref** (at 0 1.7) (layer F.SilkS) hide
+    (effects (font (size 1 1) (thickness 0.2)))
+  )
+  (fp_text value Val** (at 0 -1.5) (layer F.SilkS) hide
+    (effects (font (size 1 1) (thickness 0.2)))
+  )
+  (pad 1 thru_hole circle (at 0 0) (size 0.5 0.5) (drill 0.2) (layers *.Cu *.Mask F.SilkS)
+    (zone_connect 2))
+)

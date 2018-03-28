@@ -17,7 +17,7 @@ STM32L15x. J5, J6, C15, C16 must all be shorted.
 STM32F2xx. J5, J6 must be shorted. C15 and C16 are 2.2uF capacitors.
 STM32F4xx. J5, J6 must be shorted. C15 and C16 are 2.2uF capacitors.
 STM32F72x. J5, J6, C15, C16 must all be shorted.
-STM32F05x. Only C16 must be shorted, C15 and J5, J6 left open.
+STM32F05x. Only C16 must be shorted, C15 and J5, J6, J14 left open.
 STM32F30x. J5, C15, C16 must all be shorted, J6 left open.
 
 STM32F37x and STM32F73x are not compatible as pin order is different.

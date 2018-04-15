@@ -6,8 +6,8 @@ toggled to check for shorts between pins.
 This allows an LED or meter to be used to identify the correct working of the
 pin. The process can be operated at higher speed for use of a CRO.
 
-Suitable for the STM32F10x series of processors.
-The processors tested were the STM32F103R4T6 and the STM32F103RET6.
+Suitable for the STM32L15x series of processors.
+The processors tested were the STM32L151R6T6 and the STM32L151RET6.
 
 (c) K. Sarkies 10/02/2018
 

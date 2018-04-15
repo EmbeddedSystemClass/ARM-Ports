@@ -24,13 +24,13 @@ to store configuration data. */
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Linker script STM32F103R4T6, 16K flash, 6K RAM. */
+/* Linker script STM32F103RET6, 512K flash, 64K RAM. */
 
 /* Define memory regions. */
 MEMORY
 {
-	rom (rx) : ORIGIN = 0x08000000, LENGTH = 16K
-	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 6K
+	rom (rx) : ORIGIN = 0x08000000, LENGTH = 512K
+	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
 }
 
 /* Enforce emission of the vector table. */

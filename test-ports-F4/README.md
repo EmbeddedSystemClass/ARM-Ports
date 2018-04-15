@@ -1,13 +1,12 @@
 This exercises each available port on the processor, aimed specifically at
 the STAMP board based on the ET-ARM-STAMP. The ports are set to digital output
-and toggled, then some are set to digital inputs while the remaining outputs are
-toggled to check for shorts between pins.
+and toggled.
 
 This allows an LED or meter to be used to identify the correct working of the
 pin. The process can be operated at higher speed for use of a CRO.
 
-Suitable for the STM32F10x series of processors.
-The processors tested were the STM32F103R4T6 and the STM32F103RET6.
+Suitable for the STM32F4xx series of processors.
+The processor tested was the STM32F405RGT6 1K Flash, 128K RAM.
 
 (c) K. Sarkies 10/02/2018
 

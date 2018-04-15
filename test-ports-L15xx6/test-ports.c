@@ -37,15 +37,91 @@ Copyright K. Sarkies <ksarkies@internode.on.net>
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/pwr.h>
 #include <stdint.h>
 #include <stdbool.h>
 
 /* Prototypes */
 
-static void gpio_setup_outputs(void);
 static void gpio_setup_inputs(void);
+static void gpio_setup_outputs(void);
 static void clock_setup(void);
 static void delay(uint32_t period);
+
+/* 24MHz PLL from 8MHz HSE */
+const struct rcc_clock_scale clock_config_hse_24 = {
+	.pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
+	.pll_mul = RCC_CFGR_PLLMUL_MUL6,
+	.pll_div = RCC_CFGR_PLLDIV_DIV2,
+	.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+	.ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+	.ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+	.voltage_scale = PWR_SCALE1,
+	.flash_waitstates = 1,
+	.ahb_frequency	= 24000000,
+	.apb1_frequency = 24000000,
+	.apb2_frequency = 24000000,
+};
+
+/* 32MHz PLL from 8MHz HSE */
+const struct rcc_clock_scale clock_config_hse_32 = {
+	.pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
+	.pll_mul = RCC_CFGR_PLLMUL_MUL12,
+	.pll_div = RCC_CFGR_PLLDIV_DIV3,
+	.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+	.ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+	.ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+	.voltage_scale = PWR_SCALE1,
+	.flash_waitstates = 1,
+	.ahb_frequency	= 32000000,
+	.apb1_frequency = 32000000,
+	.apb2_frequency = 32000000,
+};
+
+/* 64MHz PLL from 8MHz HSE */
+const struct rcc_clock_scale clock_config_hse_64 = {
+	.pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
+	.pll_mul = RCC_CFGR_PLLMUL_MUL16,
+	.pll_div = RCC_CFGR_PLLDIV_DIV2,        /* 64MHz (96MHz max) */
+	.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+	.ppre1 = RCC_CFGR_PPRE1_HCLK_DIV2,      /* 32MHz max */
+	.ppre2 = RCC_CFGR_PPRE2_HCLK_DIV2,      /* 32MHz max */
+	.voltage_scale = PWR_SCALE1,            /* Highest speed */
+	.flash_waitstates = 1,
+	.ahb_frequency	= 64000000,
+	.apb1_frequency = 36000000,
+	.apb2_frequency = 36000000,
+};
+
+/* 24MHz PLL from 16MHz HSI */
+const struct rcc_clock_scale clock_config_hsi_24 = {
+	.pll_source = RCC_CFGR_PLLSRC_HSI_CLK,
+	.pll_mul = RCC_CFGR_PLLMUL_MUL3,
+	.pll_div = RCC_CFGR_PLLDIV_DIV2,
+	.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+	.ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+	.ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+	.voltage_scale = PWR_SCALE1,
+	.flash_waitstates = 1,
+	.ahb_frequency	= 24000000,
+	.apb1_frequency = 24000000,
+	.apb2_frequency = 24000000,
+};
+
+/* 32MHz PLL from 16MHz HSI */
+const struct rcc_clock_scale clock_config_hsi_32 = {
+	.pll_source = RCC_CFGR_PLLSRC_HSI_CLK,
+	.pll_mul = RCC_CFGR_PLLMUL_MUL6,
+	.pll_div = RCC_CFGR_PLLDIV_DIV3,
+	.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+	.ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+	.ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+	.voltage_scale = PWR_SCALE1,
+	.flash_waitstates = 1,
+	.ahb_frequency	= 32000000,
+	.apb1_frequency = 32000000,
+	.apb2_frequency = 32000000,
+};
 
 /* Globals */
 
@@ -134,14 +210,14 @@ clocks are turned on.
 
 void clock_setup(void)
 {
-    rcc_clock_setup_in_hse_8mhz_out_72mhz();
+//    rcc_clock_setup_pll(&rcc_clock_config[RCC_CLOCK_VRANGE1_HSI_PLL_24MHZ]);
+    rcc_clock_setup_pll(&clock_config_hse_24);
+
 /* Enable all GPIO clocks. */
     rcc_periph_clock_enable(RCC_GPIOA);
     rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_GPIOC);
     rcc_periph_clock_enable(RCC_GPIOD);
-    rcc_periph_clock_enable(RCC_AFIO);  /* Must enable this to allow remap */
-
 }
 
 /*--------------------------------------------------------------------------*/
@@ -152,31 +228,28 @@ Setup all available GPIO Ports A, B, C, D as outputs.
 
 void gpio_setup_outputs(void)
 {
-/* Disable SWD and JTAG to allow full use of the ports PA13, PA14, PA15 */
-    gpio_primary_remap(AFIO_MAPR_SWJ_CFG_JTAG_OFF_SW_OFF,0);
-
-    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 |GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
     gpio_clear(GPIOA,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
-    gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
     gpio_clear(GPIOB,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
-    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13);
     gpio_clear(GPIOC,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13);
 
-    gpio_set_mode(GPIOD, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO2);
     gpio_clear(GPIOD, GPIO2);
 }
@@ -190,22 +263,19 @@ of leakage between pins. This is based on the LQFP64 version of the STM32Fxxx
 
 void gpio_setup_inputs(void)
 {
-/* Disable SWD and JTAG to allow full use of the ports PA13, PA14, PA15 */
-    gpio_primary_remap(AFIO_MAPR_SWJ_CFG_JTAG_OFF_SW_OFF,0);
-
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
+    gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO2 | GPIO3 | GPIO4 | GPIO6 |
             GPIO8 | GPIO10 | GPIO12 | GPIO15);
 
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
+    gpio_mode_setup(GPIOB, GPIO_MODE_INPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO2 | GPIO4 | GPIO6 |
             GPIO8 | GPIO11 | GPIO12 | GPIO14);
 
-    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
+    gpio_mode_setup(GPIOC, GPIO_MODE_INPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO2 | GPIO4 | GPIO6 |
             GPIO8 | GPIO11 | GPIO13);
 
-    gpio_set_mode(GPIOD, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
+    gpio_mode_setup(GPIOD, GPIO_MODE_INPUT, GPIO_PUPD_NONE,
             GPIO2);
 }
 

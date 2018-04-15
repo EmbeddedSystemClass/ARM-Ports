@@ -34,5 +34,18 @@ It provides a single Rx/Tx pair. It also has the option to allow an external
 signal to force power down but this is not used here. This single RS232
 interface is provided mainly for programming.
 
+For testing, when the PC serial cable is inserted, the Tx input from that sits
+at about -6V. This triggers the device charge pumps to work. The voltages
+expected are:
+
+Pin 1 Enable Inv            Gnd
+Pin 2 C1+ (C10)            5.96V
+Pin 3 V+  (C12)            6.12V
+Pin 4 C1- (C10)            3.1V
+Pin 5 C2- (C14)            5.78V
+Pin 6 C2+ (C14)            -0.3V
+Pin 7 V-  (C13)            -5.6V
+Pin 8 Tx in                -6V
+
 (c) K. Sarkies 15/02/2018
 

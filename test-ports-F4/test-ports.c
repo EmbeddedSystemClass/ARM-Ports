@@ -43,7 +43,6 @@ Copyright K. Sarkies <ksarkies@internode.on.net>
 /* Prototypes */
 
 static void gpio_setup_outputs(void);
-static void gpio_setup_inputs(void);
 static void clock_setup(void);
 static void delay(uint32_t period);
 
@@ -85,29 +84,6 @@ device. It is always set as input and will always show high during the test. */
         gpio_clear(GPIOD,
             GPIO2);
         delay(1600000);
-/* Set some as inputs to check for cross leakage between pins.
-Pulse remaining pins still set as outputs. */
-        gpio_setup_inputs();
-        gpio_set(GPIOA,
-                GPIO1 | GPIO5 | GPIO7 |
-                GPIO9 | GPIO11 | GPIO13 | GPIO14);
-        gpio_set(GPIOB,
-                GPIO1 | GPIO3 | GPIO5 | GPIO7 |
-                GPIO9 | GPIO10 | GPIO13 | GPIO15);
-        gpio_set(GPIOC,
-                GPIO1 | GPIO3 | GPIO5 | GPIO7 |
-                GPIO9 | GPIO10 | GPIO12);
-        delay(800000);
-        gpio_clear(GPIOA,
-                GPIO1 | GPIO5 | GPIO7 |
-                GPIO9 | GPIO11 | GPIO13 | GPIO14);
-        gpio_clear(GPIOB,
-                GPIO1 | GPIO3 | GPIO5 | GPIO7 |
-                GPIO9 | GPIO10 | GPIO13 | GPIO15);
-        gpio_clear(GPIOC,
-                GPIO1 | GPIO3 | GPIO5 | GPIO7 |
-                GPIO9 | GPIO10 | GPIO12);
-        delay(1600000);
     }
 
     return 0;
@@ -134,13 +110,12 @@ clocks are turned on.
 
 void clock_setup(void)
 {
-    rcc_clock_setup_in_hse_8mhz_out_72mhz();
+//    rcc_clock_setup_in_hse_8mhz_out_72mhz();
 /* Enable all GPIO clocks. */
     rcc_periph_clock_enable(RCC_GPIOA);
     rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_GPIOC);
     rcc_periph_clock_enable(RCC_GPIOD);
-    rcc_periph_clock_enable(RCC_AFIO);  /* Must enable this to allow remap */
 
 }
 
@@ -152,60 +127,30 @@ Setup all available GPIO Ports A, B, C, D as outputs.
 
 void gpio_setup_outputs(void)
 {
-/* Disable SWD and JTAG to allow full use of the ports PA13, PA14, PA15 */
-    gpio_primary_remap(AFIO_MAPR_SWJ_CFG_JTAG_OFF_SW_OFF,0);
-
-    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 |GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
     gpio_clear(GPIOA,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
-    gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
     gpio_clear(GPIOB,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
-    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13);
     gpio_clear(GPIOC,
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 | GPIO7 |
             GPIO8 | GPIO9 | GPIO10 | GPIO11 | GPIO12 | GPIO13);
 
-    gpio_set_mode(GPIOD, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL,
+    gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
             GPIO2);
     gpio_clear(GPIOD, GPIO2);
 }
 
-/*--------------------------------------------------------------------------*/
-/** @brief GPIO Setup as Inputs
-
-Setup GPIO Ports A, B, C, D as inputs on alternate pins to allow for checking
-of leakage between pins. This is based on the LQFP64 version of the STM32Fxxx
-*/
-
-void gpio_setup_inputs(void)
-{
-/* Disable SWD and JTAG to allow full use of the ports PA13, PA14, PA15 */
-    gpio_primary_remap(AFIO_MAPR_SWJ_CFG_JTAG_OFF_SW_OFF,0);
-
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
-            GPIO0 | GPIO2 | GPIO3 | GPIO4 | GPIO6 |
-            GPIO8 | GPIO10 | GPIO12 | GPIO15);
-
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
-            GPIO0 | GPIO2 | GPIO4 | GPIO6 |
-            GPIO8 | GPIO11 | GPIO12 | GPIO14);
-
-    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
-            GPIO0 | GPIO2 | GPIO4 | GPIO6 |
-            GPIO8 | GPIO11 | GPIO13);
-
-    gpio_set_mode(GPIOD, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN,
-            GPIO2);
-}
 
